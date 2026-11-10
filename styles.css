@@ -1,0 +1,45 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+.nav-container{
+    display: flex;
+    border: 1px solid;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+#header-container{
+    display: flex;
+    gap: 10px;
+}
+
+.header-title{
+    cursor: pointer;
+}
+
+.cart-container{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.cart-items{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blueviolet;
+    color: white;
+}
+
+.close-view{
+    display: none;
+}
+
