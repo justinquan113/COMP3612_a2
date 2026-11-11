@@ -4,35 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
-    
+    <link rel="stylesheet" href="output.css">
+    <script type="module" src="app.js"></script>
 </head>
 <body>
     <nav id="nav">
-        <div class="nav-container">
+        <div class="flex justify-between items-center py-5 px-10 border border-b-black">
             <h2>Logo</h2>
-            <div id="header-container">
-                <h3 class="header-title">Home</h3>
+            <div class="flex gap-2.5">
+                <h3 class="header-title cursor-pointer">Home</h3>
                 <p>|</p>
-                <h3 class="header-title">Browse</h3>
+                <h3 class="header-title cursor-pointer">Browse</h3>
                 <p>|</p>
-                <h3 class="header-title">Category</h3>
+                <h3 class="header-title cursor-pointer">Category</h3>
                 <p>|</p>
-                <h3 class="header-title">About</h3>
+                <h3 class="header-title cursor-pointer">About</h3>
             </div>
-            <div class="cart-container">
+            <div class="flex gap-1.5 items-center">
                 <h3>Cart</h3>
-                <h3 class="cart-items">0</h3>
+                <h3 class="w-5 h-5 flex justify-center items-center bg-blue-500 rounded-full text-white">0</h3>
             </div>
         </div>
        
     </nav>
     <main>
         <article id="home">
-            <p>home</p>
+            <div class="flex-col h-screen">
+                <div class="h-[40%]">
+                    <p>picture</p>
+                </div>
+                <div class="py-10 px-20 bg-gray-100 h-[35%] flex-col">
+                    <h1>Essentials</h1>
+                    <div id="card-container" class="flex h-[80%] gap-10">
+                       <template>
+                            <div class="border w-[20%]">
+                                <img>
+                                <div class="bg-white">
+                                    <p class="text-center"></p>
+                                </div>
+                            </div>
+                        </template>
+                     
+                    </div>
+                </div>
+            </div>
         </article>
         <article id="browse" class="close-view">
-            <p>Browse</p>
+            <div id="departments">
+                <h2>Departments</h2>
+            </div>
+
+            <div>
+                <h2>other</h2>
+            </div>
         </article>
         <article id="category" class="close-view">
             <p>Category</p>
@@ -42,8 +66,8 @@
         </article>
     </main>
     <footer id="footer">
-
+        
     </footer>
-    <script src="app.js"></script>
+    
 </body>
 </html>
