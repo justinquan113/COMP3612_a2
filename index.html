@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="output.css">
+    
     <script type="module" src="app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     <nav id="nav">
-        <div class="flex justify-between items-center py-5 px-10 border border-b-black">
+        <div class="flex justify-between items-center py-4 px-10 border border-b-black">
             <h2>Logo</h2>
             <div class="flex gap-2.5">
                 <h3 class="header-title cursor-pointer">Home</h3>
@@ -21,34 +26,59 @@
                 <h3 class="header-title cursor-pointer">About</h3>
             </div>
             <div class="flex gap-1.5 items-center">
-                <h3>Cart</h3>
+                <h3 class="cursor-pointer">Cart</h3>
                 <h3 class="w-5 h-5 flex justify-center items-center bg-blue-500 rounded-full text-white">0</h3>
             </div>
         </div>
        
     </nav>
-    <main>
+    <main class="flex-1">
         <article id="home">
-            <div class="flex-col h-screen">
-                <div class="h-[40%]">
-                    <p>picture</p>
+            <div class="flex flex-col">
+                <div class="h-[50vh]">
+                    <img class="w-full h-full object-cover" src="/images/wood.jpg">
                 </div>
-                <div class="py-10 px-20 bg-gray-100 h-[35%] flex-col">
-                    <h1>Essentials</h1>
-                    <div id="card-container" class="flex h-[80%] gap-10">
-                       <template>
-                            <div class="border w-[20%]">
-                                <img>
+                <div class="py-10 px-20 bg-gray-100 h-[45vh]">
+                    <h1 class="mb-5 text-2xl">Essentials</h1>
+                    <div id="essential-container" class="flex h-[80%] gap-8">
+                       <template id="essential-card">
+                            <div class="border w-[20%] flex flex-col overflow-hidden rounded-2xl">
+                                <img class="w-full flex-1 min-h-0 object-cover">
                                 <div class="bg-white">
-                                    <p class="text-center"></p>
+                                    <p class="text-center py-2 capitalize font-bold"></p>
                                 </div>
                             </div>
                         </template>
-                     
+                    </div>
+                </div>
+                <div class="h-[25vh]" id="browse-collection">
+                    <div class="flex h-full">
+                        <div class="flex flex-col justify-center items-center w-[50%] bg-stone-200 gap-4">
+                            <h2 class="text-2xl text-stone-800">Our Collection</h2>
+                            <button id="browse-btn" class="cursor-pointer bg-stone-900 text-white px-6 py-3 rounded-2xl hover:bg-stone-700">Browse Collection</button>
+                        </div>
+                        <img class="w-[50%] h-full object-cover" src="images/kitchen.jpg">
+                    </div>
+                </div>
+                <div id="feature-items" class="h-[55vh] bg-gray-100 py-10 px-20">
+                    <h1 class="mb-5 text-2xl">Featured Products</h1>
+                    <div id="feature-container" class="flex h-[80%] gap-8">
+                         <template id="feature-card">
+                            <div class="border w-[20%] flex flex-col overflow-hidden rounded-xl">
+                                <img class="w-full flex-1 min-h-0 object-cover">
+                                <h3 class="text-center my-3"></h3>  
+                                <button 
+                                    id="feature-btn" 
+                                    class="self-center cursor-pointer bg-stone-900 text-white px-3 py-1 rounded-2xl mb-4 hover:bg-stone-700 w-[50%]"
+                                    data-id="" >
+                                </button>                       
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
         </article>
+
         <article id="browse" class="close-view">
             <div id="departments">
                 <h2>Departments</h2>
@@ -64,9 +94,28 @@
         <article id="about" class="close-view">
             <p>about</p>
         </article>
+        <article id="single-product" class="close-view">
+            <p>single product page</p>
+        </article>
     </main>
-    <footer id="footer">
-        
+    <footer id="footer"  class="h-[25vh] p-5">
+        <div class="grid grid-flow-col grid-rows-[repeat(5,auto)] gap-2.5">
+            <p class="font-bold">Customer Service</p>
+            <a>Contact Us</a>
+            <a>Size Guide</a>
+            <a>Returns</a>
+            <a>Shipping Info</a>
+            <p class="font-bold">Company</p>
+            <a>About Us</a>
+            <a>Careers</a>
+            <a>Press</a>
+            <a>Privacy Policy</a>
+            <p class="font-bold">Connect</p>
+            <a href="https://github.com/justinquan113/COMP3612_a2">Github</a>
+            <a>Facebook</a>
+            <a>Instagram</a>
+            <a>Twitter</a>
+        </div>
     </footer>
     
 </body>
