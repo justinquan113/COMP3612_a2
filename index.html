@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Store</title>
     <link rel="stylesheet" href="output.css">
     
     <script type="module" src="app.js"></script>
@@ -13,6 +13,7 @@
 
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Header starts here -->
     <nav id="nav">
         <div class="flex justify-between items-center py-4 px-10 border border-b-black">
             <h2>Logo</h2>
@@ -30,9 +31,10 @@
                 <h3 class="w-5 h-5 flex justify-center items-center bg-blue-500 rounded-full text-white">0</h3>
             </div>
         </div>
-       
     </nav>
+
     <main class="flex-1">
+        <!-- Home Page starts here -->
         <article id="home">
             <div class="flex flex-col">
                 <div class="h-[50vh]">
@@ -79,6 +81,7 @@
             </div>
         </article>
 
+        <!-- Browse Page starts here -->
         <article id="browse" class="close-view">
             <div id="departments">
                 <h2>Departments</h2>
@@ -88,16 +91,115 @@
                 <h2>other</h2>
             </div>
         </article>
+
+        <!-- Category Page starts here -->
         <article id="category" class="close-view">
             <p>Category</p>
         </article>
+
+        <!-- About Page starts here -->
         <article id="about" class="close-view">
             <p>about</p>
         </article>
+
+        <!-- Single Product Page starts here -->
         <article id="single-product" class="close-view">
-            <p>single product page</p>
+            <div class="flex flex-col p-8 ">
+                <div id="breadcrumb">
+                    <template id="breadcrumb-container">
+                        <ol class="flex gap-2">
+                            <li id="breadcrumb-home" class="font-bold underline"></li>
+                            <li id="arrow"></li>
+                            <li id="breadcrumb-category" class="capitalize font-bold underline"></li>
+                            <li id="arrow1"></li>
+                            <li id="breadcrumb-title" class="font-bold"></li>
+                        </ol>
+                    </template>
+                </div>
+                <div id="product-info" class="flex h-[50vh] justify-evenly">
+                    <div id="prod-img" class="w-[55%] h-full">
+                        
+                    </div>
+                    <div id="prod-desc" class="h-full flex flex-col">
+                        <div id="prod-details" class="flex flex-col gap-4">
+                            <template id="prod-template">
+                                <h1 id="prod-title" class="font-bold text-3xl"></h1>
+                                <h2 id="prod-price" class="font-bold text-2xl"></h2>
+                                <p id="prod-sku"></p>
+                                <p id="prod-rating"></p>
+                                <div id="tags" class="flex gap-2">
+                                    
+                                </div>
+                                <p id="prod-stock"></p>
+                                <p id="prod-description" class="w-[60%]"></p>
+                            </template>
+                        </div>
+                        <div class="flex flex-col gap-5 mt-5">
+                            <div class="flex items-center gap-2">
+                                <p>Quantity:</p>
+                                <input id="quantity" class="border p-1 w-[10%]" min="1" value="1">
+                            </div>
+                            <button id="addtocart" class="bg-blue-400 rounded-md p-2 cursor-pointer hover:bg-blue-300 w-[20%]">Add to Cart</button>
+                        </div>
+                    </div> 
+                </div>
+                <div id="prod-specs">
+                    <div class="inline-grid grid-cols-2">
+                        <h3 id="specifics" class="border border-b-0 py-3 px-5 text-center cursor-pointer bg-stone-600 text-white">Specifications</h3>
+                        <h3 id="reviews" class="border border-l-0 border-b-0 py-3 px-5 text-center cursor-pointer hover:bg-stone-600 hover:text-white">Reviews</h3>
+                    </div>
+                    <div class="border h-[30%] p-5">
+                        <div id="specs-content" class="flex flex-col gap-4">
+                            <div class="flex gap-3">
+                                <h2>Weight: </h2>
+                                <p id="weight"></p>
+                            </div>
+                            <div class="flex gap-3">
+                                <h2>Dimensions: </h2>
+                                <div class="flex gap-2">
+                                    <p id="width"></p>
+                                    <p>x</p>
+                                    <p id="height"></p>
+                                    <p>x</p>
+                                    <p id="depth"></p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <h2>Warranty: </h2>
+                                <p id="warranty"></p>
+                            </div>
+                             <div class="flex gap-3">
+                                <h2>Shipping Info: </h2>
+                                <p id="shipping"></p>
+                            </div>
+                             <div class="flex gap-3">
+                                <h2>Returns: </h2>
+                                <p id="return"></p>
+                            </div>
+                        </div>
+                        <div id="reviews-content" class="close-view flex flex-col gap-3">
+                            <template id="review-template">
+                                <div class="review-card border rounded-md p-4 bg-stone-50">
+                                    <div class="flex justify-between items-center">
+                                        <h2 class="review-name font-bold"></h2>
+                                        <p class="review-rating text-yellow-500"></p>
+                                    </div>
+                                    <div class="flex gap-3 text-sm text-stone-500">
+                                        <p class="review-email"></p>
+                                        <p class="review-date"></p>
+                                    </div>
+                                    <p class="review-comment mt-2"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </article>
     </main>
+
+    <!-- Footer starts here -->
     <footer id="footer"  class="h-[25vh] p-5">
         <div class="grid grid-flow-col grid-rows-[repeat(5,auto)] gap-2.5">
             <p class="font-bold">Customer Service</p>
@@ -117,6 +219,5 @@
             <a>Twitter</a>
         </div>
     </footer>
-    
 </body>
 </html>
