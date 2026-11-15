@@ -27,15 +27,15 @@
                 <h3 class="header-title cursor-pointer">About</h3>
             </div>
             <div class="flex gap-1.5 items-center">
-                <h3 class="cursor-pointer">Cart</h3>
-                <h3 class="w-5 h-5 flex justify-center items-center bg-blue-500 rounded-full text-white">0</h3>
+                <h3 class="header-title cursor-pointer">Cart</h3>
+                <h3 class="w-5 h-5 flex justify-center items-center bg-blue-500 rounded-full text-white" id="cart-count">0</h3>
             </div>
         </div>
     </nav>
 
     <main class="flex-1">
         <!-- Home Page starts here -->
-        <article id="home">
+        <article id="home" class="close-view">
             <div class="flex flex-col">
                 <div class="h-[50vh]">
                     <img class="w-full h-full object-cover" src="/images/wood.jpg">
@@ -98,9 +98,9 @@
         </article>
 
         <!-- About Page starts here -->
-        <article id="about" class="close-view">
+        <dialog id="about" class="close-view">
             <p>about</p>
-        </article>
+        </dialog>
 
         <!-- Single Product Page starts here -->
         <article id="single-product" class="close-view">
@@ -197,10 +197,19 @@
 
             </div>
         </article>
+
+        <!-- Shopping Cart Page starts here -->
+        <div id="cart-page">
+            <div class="p-4">
+                <h1 class="text-center font-bold text-2xl w-[75%]">Shopping Cart</h1>
+                
+                
+            </div>
+        </div>
     </main>
 
     <!-- Footer starts here -->
-    <footer id="footer"  class="h-[25vh] p-5">
+    <footer id="footer"  class="h-[25vh] p-5 border border-t">
         <div class="grid grid-flow-col grid-rows-[repeat(5,auto)] gap-2.5">
             <p class="font-bold">Customer Service</p>
             <a>Contact Us</a>

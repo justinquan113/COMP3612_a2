@@ -10,6 +10,7 @@ function C(element){
 
 const url = 'https://dummyjson.com/products?limit=100'
 const STORAGE_KEY = 'products'
+const CART_KEY = 'cart'
 let products
 document.addEventListener("DOMContentLoaded", () =>{
     const cache = localStorage.getItem(STORAGE_KEY)
@@ -40,14 +41,16 @@ document.addEventListener("DOMContentLoaded", () =>{
     const categoryPage = $('#category')
     const aboutPage = $('#about')
     const singleProductPage = $('#single-product')
+    const shoppingCartPage = $('#cart-page')
     const browseBtn = $('#browse-btn')
-
+    
     //clicking the browse button goes to the browse page
     browseBtn.addEventListener('click', () => {
         homePage.classList.add('close-view')
         browsePage.classList.remove('close-view')
     })
 
+    updateCartCount()
 
     headers.forEach(h => h.addEventListener('click', switchView))
 
@@ -60,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () =>{
             categoryPage.classList.add('close-view')
             aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
+            shoppingCartPage.classList.add('close-view')
         }
     
         else if(view == 'Browse'){
@@ -68,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () =>{
             categoryPage.classList.add('close-view')
             aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
+            shoppingCartPage.classList.add('close-view')
         }
     
         else if(view == 'Category'){
@@ -76,6 +81,16 @@ document.addEventListener("DOMContentLoaded", () =>{
             categoryPage.classList.remove('close-view')
             aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
+            shoppingCartPage.classList.add('close-view')
+        }
+
+        else if(view == 'Cart'){
+            homePage.classList.add('close-view')
+            browsePage.classList.add('close-view')
+            categoryPage.classList.add('close-view')
+            aboutPage.classList.add('close-view')
+            singleProductPage.classList.add('close-view')
+            shoppingCartPage.classList.remove('close-view')
         }
     
         else{
@@ -84,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () =>{
             categoryPage.classList.add('close-view')
             aboutPage.classList.remove('close-view')
             singleProductPage.classList.add('close-view')
+            shoppingCartPage.classList.add('close-view')
         }
     }
 
@@ -185,8 +201,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         addToCart(id, quantity)
     })
 
-    const CART_KEY = 'cart'
-
     /*add a product to the cart saved in localStorage*/
     function addToCart(id, quantity){
 
@@ -203,8 +217,20 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
 
         localStorage.setItem(CART_KEY, JSON.stringify(cart))
+        updateCartCount()
+        
     }
-    
+
+    function updateCartCount(){
+        let quantity = 0
+        const cartCount = $('#cart-count')
+        const cartArr = JSON.parse(localStorage.getItem(CART_KEY)) || []
+        for(let i of cartArr){
+            quantity += i.quantity
+        }
+        cartCount.textContent = quantity
+    }
+
 
     const specificationsbtn = $('#specifics')
     const reviewbtn = $('#reviews')
