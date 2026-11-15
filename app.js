@@ -156,8 +156,8 @@ function featureProducts(){
 
 function initBrowse() {
     populateCategoryFilters()
-    setupBrowseListeners()
-    updBrowseView()
+    initBrowseListeners()
+    // updBrowseView()
 }
 
 // Referenced: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set to use set for populating categories
@@ -186,6 +186,34 @@ function populateCategoryFilters() {
     }
 }
 
+function initBrowseListeners() {
+    // Click to toggle display and hide
+    const accordions = document.querySelectorAll('#filter .accordion-header')
+    accordions.forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling
+            const icon = header.querySelector('.accordion-icon')
+            const isHidden = body.classList.toggle('close-view')
+            icon.textcontent = isHidden ? '▶' : '▼'
+        })
+    })
 
+    // Name filter
+    $('#filter-name').addEventListener('input', (e) => {
+        filterState.name = e.target.value.trim()
+        updateBrowseView()
+    })
 
-//
+    // Category filter, referenced: https://medium.com/codetodeploy/event-delegation-and-event-handling-in-javascript-bcde9a7208d3
+    $('#filter-category-list').addEventListener('change', (e) => {
+        if (!e.target.classList.contains('category-checkbox')) return
+        const category = e.target.value
+        if (e.target.checked) {
+            filterState.categories.add(cat)
+        }
+        else {
+            filterState.categories.delete(cat)
+        }
+        updateBrowseView()
+    })
+}
