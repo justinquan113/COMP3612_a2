@@ -11,6 +11,16 @@ function C(element){
 const url = 'https://dummyjson.com/products?limit=100'
 const STORAGE_KEY = 'products'
 let products
+
+const filterState = {
+    name: '',
+    categories: new Set(),
+    minRating: 0,
+    underPrice: null,
+    overPrice: null,
+    sortBy: 'name' // Default
+}
+
 document.addEventListener("DOMContentLoaded", () =>{
     const cache = localStorage.getItem(STORAGE_KEY)
 
@@ -276,6 +286,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
 function renderAll(){
     renderHome()
+    initBrowse()
 }
 
 function renderHome(){
@@ -318,5 +329,68 @@ function featureProducts(){
     }
 }
 
+// Browse Functions:
 
+function initBrowse() {
+    populateCategoryFilters()
+    initBrowseListeners()
+    // updBrowseView()
+}
 
+// Referenced: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set to use set for populating categories
+function populateCategoryFilters() {
+    const catList = $('#filter-category-list')
+    catList.innerHTML = ''
+
+    const categories = new Set(products.map(p => p.category))
+
+    for (let category of categories) {
+        const label = C('label')
+        label.className = 'flex items-center gap-2 cursor pointer category option'
+        label.dataset.category = category
+
+        const checkbox = C('input')
+        checkbox.type = 'checkbox'
+        checkbox.value = category
+        checkbox.className = 'category-checkbox cursor-pointer'
+
+        const span = C('span')
+        span.textContent = category
+
+        label.appendChild(checkbox)
+        label.appendChild(span)
+        catList.appendChild(label)
+    }
+}
+
+function initBrowseListeners() {
+    // Click to toggle display and hide
+    const accordions = document.querySelectorAll('#filter .accordion-header')
+    accordions.forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling
+            const icon = header.querySelector('.accordion-icon')
+            const isHidden = body.classList.toggle('close-view')
+            icon.textcontent = isHidden ? '▶' : '▼'
+        })
+    })
+
+    // Name filter
+    $('#filter-name').addEventListener('input', (e) => {
+        filterState.name = e.target.value.trim()
+        updateBrowseView()
+    })
+
+    // Category filter, referenced: https://medium.com/codetodeploy/event-delegation-and-event-handling-in-javascript-bcde9a7208d3
+    $('#filter-category-list').addEventListener('change', (e) => {
+        if (!e.target.classList.contains('category-checkbox')) return
+        const category = e.target.value
+        if (e.target.checked) {
+            filterState.categories.add(cat)
+        }
+        else {
+            filterState.categories.delete(cat)
+        }
+        updateBrowseView()
+    })
+}
