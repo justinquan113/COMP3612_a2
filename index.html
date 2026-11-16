@@ -116,12 +116,27 @@
                     <div class="border rounded-xl p-3 bg-gray-100">
                         <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
                             <span>Rating</span>
-                            <span class="accordion-icon">+</span>
+                            <span class="accordion-icon">▼</span>
                         </div>
-                        <div class="accordion-body my-3 flex flex-col gap-2">
-                            <input id="filter-rating" type="range" min="0" max="5" step="1" value="0" class="w-full cursor-pointer">
-                            <p id="rating-display" class="text-center">Any Rating</p>
+                        <div id="filter-rating-list" class="accordion-body my-3 flex flex-col gap-2">
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="4">
+                                <span>★★★★☆</span>
+                                <span>4 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="3">
+                                <span>★★★☆☆</span>
+                                <span>3 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="2">
+                                <span>★★☆☆☆</span>
+                                <span>2 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="1">
+                                <span>★☆☆☆☆</span>
+                                <span>1 & Up</span>
+                            </div>
                         </div>
+                    </div>
 
                     <!-- Price Accordion -->
                     <div class="border rounded-xl p-3 bg-gray-100">
