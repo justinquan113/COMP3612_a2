@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     /*add a product to the cart saved in localStorage*/
     function addToCart(id, quantity){
-
+        
         //load the saved cart, or start with an empty one
         const cart = JSON.parse(localStorage.getItem(CART_KEY)) || []
 

@@ -35,7 +35,7 @@
 
     <main class="flex-1">
         <!-- Home Page starts here -->
-        <article id="home" class="close-view">
+        <article id="home">
             <div class="flex flex-col">
                 <div class="h-[50vh]">
                     <img class="w-full h-full object-cover" src="/images/wood.jpg">
@@ -71,7 +71,7 @@
                                 <h3 class="text-center my-3"></h3>  
                                 <button 
                                     id="feature-btn" 
-                                    class="self-center cursor-pointer bg-stone-900 text-white px-3 py-1 rounded-2xl mb-4 hover:bg-stone-700 w-[50%]"
+                                    class="self-center cursor-pointer bg-stone-900 text-white px-3 py-1 rounded-2xl mb-4 hover:bg-stone-700 w-[50%] xl: text-md md: text-sm"
                                     data-id="" >
                                 </button>                       
                             </div>
@@ -116,11 +116,11 @@
                         </ol>
                     </template>
                 </div>
-                <div id="product-info" class="flex h-[50vh] justify-evenly">
-                    <div id="prod-img" class="w-[55%] h-full">
-                        
+                <div id="product-info" class="flex justify-evenly">
+                    <div id="prod-img" class="w-[50%] h-[50vh]">
+
                     </div>
-                    <div id="prod-desc" class="h-full flex flex-col">
+                    <div id="prod-desc" class="w-[50%] flex flex-col">
                         <div id="prod-details" class="flex flex-col gap-4">
                             <template id="prod-template">
                                 <h1 id="prod-title" class="font-bold text-3xl"></h1>
@@ -139,7 +139,7 @@
                                 <p>Quantity:</p>
                                 <input id="quantity" class="border p-1 w-[10%]" min="1" value="1">
                             </div>
-                            <button id="addtocart" class="bg-blue-400 rounded-md p-2 cursor-pointer hover:bg-blue-300 w-[20%]">Add to Cart</button>
+                            <button id="addtocart" class="bg-blue-400 rounded-md p-2 cursor-pointer w-[20%] hover:bg-blue-300 ">Add to Cart</button>
                         </div>
                     </div> 
                 </div>
@@ -199,7 +199,7 @@
         </article>
 
         <!-- Shopping Cart Page starts here -->
-        <div id="cart-page">
+        <div id="cart-page" class="close-view">
             <div class="p-4">
                 <h1 class="text-center font-bold text-2xl w-[75%]">Shopping Cart</h1>
                 
