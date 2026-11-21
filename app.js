@@ -1,3 +1,8 @@
+const url = 'https://dummyjson.com/products?limit=100'
+const STORAGE_KEY = 'products'
+const CART_KEY = 'cart'
+let products
+
 /*get html element*/
 function $(element){
     return document.querySelector(element)
@@ -8,10 +13,7 @@ function C(element){
     return document.createElement(element)
 }
 
-const url = 'https://dummyjson.com/products?limit=100'
-const STORAGE_KEY = 'products'
-const CART_KEY = 'cart'
-let products
+
 document.addEventListener("DOMContentLoaded", () =>{
     const cache = localStorage.getItem(STORAGE_KEY)
 
@@ -43,15 +45,17 @@ document.addEventListener("DOMContentLoaded", () =>{
     const singleProductPage = $('#single-product')
     const shoppingCartPage = $('#cart-page')
     const browseBtn = $('#browse-btn')
-    
-    //clicking the browse button goes to the browse page
-    browseBtn.addEventListener('click', () => {
-        homePage.classList.add('close-view')
-        browsePage.classList.remove('close-view')
-    })
+    const specificationsbtn = $('#specifics')
+    const reviewbtn = $('#reviews')
+    const specsContent = $('#specs-content')
+    const reviewsContent = $('#reviews-content')
+    const addToCartbtn = $('#addtocart')
+    const quantityInput = $('#quantity')
+    const cartItemContainer = $('#items-container')
+    const featureContainer = $('#feature-container')
 
     updateCartCount()
-
+  
     headers.forEach(h => h.addEventListener('click', switchView))
 
     /*switch views between pages*/
@@ -103,22 +107,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
 
-    const featureContainer = $('#feature-container')
-
-    //clicking a view product button goes to single product page 
-    featureContainer.addEventListener('click', (e) => {
-        const btn = e.target.closest('button')
-        if(!btn) return
-        const id = btn.dataset.id
-        homePage.classList.add('close-view')
-        singleProductPage.classList.remove('close-view')
-        singleProductRender(id)
-        reviewsAndSpecifications(id)
-
-        //switching views keeps the old scroll position, so jump back to the top
-        window.scrollTo(0, 0)
-    })
-    
     /*navigation for a single product*/
     function breadCrumb(prod_id){
         const container = $('#breadcrumb')
@@ -188,19 +176,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         }       
     }
 
-    const addToCartbtn = $('#addtocart')
-    const quantityInput = $('#quantity')
-    addToCartbtn.addEventListener('click', () => {
-        const quantity = Number(quantityInput.value)
-        if(!Number.isInteger(quantity) || quantity <= 0){
-            alert("Please Enter a quantity")
-            return
-        }
-
-        const id = Number(addToCartbtn.dataset.id)
-        addToCart(id, quantity)
-    })
-
     /*add a product to the cart saved in localStorage*/
     function addToCart(id, quantity){
         
@@ -217,10 +192,19 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
 
         localStorage.setItem(CART_KEY, JSON.stringify(cart))
+        renderShoppingCartItems()
         updateCartCount()
         
     }
-
+    function removeFromCart(id){
+        const cart = JSON.parse(localStorage.getItem(CART_KEY))
+        const updateCart = cart.filter(item => item.id != id)
+        localStorage.setItem(CART_KEY, JSON.stringify(updateCart))
+        renderShoppingCartItems()
+        updateCartCount()
+    
+    }
+  
     function updateCartCount(){
         let quantity = 0
         const cartCount = $('#cart-count')
@@ -230,13 +214,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
         cartCount.textContent = quantity
     }
-
-
-    const specificationsbtn = $('#specifics')
-    const reviewbtn = $('#reviews')
-    const specsContent = $('#specs-content')
-    const reviewsContent = $('#reviews-content')
-
     
     const activeTab = ['bg-stone-600', 'text-white']
     const inactiveTab = ['hover:bg-stone-600', 'hover:text-white']
@@ -251,13 +228,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         showContent.classList.remove('close-view')
         hideContent.classList.add('close-view')
     }
-
-    specificationsbtn.addEventListener('click', () => {
-        selectTab(specificationsbtn, reviewbtn, specsContent, reviewsContent)
-    })
-    reviewbtn.addEventListener('click', () => {
-        selectTab(reviewbtn, specificationsbtn, reviewsContent, specsContent)
-    })
 
     /*renders review and specifications of a single product*/
     function reviewsAndSpecifications(prod_id){
@@ -298,10 +268,56 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
 
+    //clicking the browse button goes to the browse page
+    browseBtn.addEventListener('click', () => {
+        homePage.classList.add('close-view')
+        browsePage.classList.remove('close-view')
+    })
+
+    //clicking a view product button goes to single product page 
+    featureContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button')
+        if(!btn) return
+        const id = btn.dataset.id
+        homePage.classList.add('close-view')
+        singleProductPage.classList.remove('close-view')
+        singleProductRender(id)
+        reviewsAndSpecifications(id)
+
+        //switching views keeps the old scroll position, so jump back to the top
+        window.scrollTo(0, 0)
+    })
+
+    specificationsbtn.addEventListener('click', () => {
+        selectTab(specificationsbtn, reviewbtn, specsContent, reviewsContent)
+    })
+
+    reviewbtn.addEventListener('click', () => {
+        selectTab(reviewbtn, specificationsbtn, reviewsContent, specsContent)
+    })
+
+    addToCartbtn.addEventListener('click', () => {
+        const quantity = Number(quantityInput.value)
+        if(!Number.isInteger(quantity) || quantity <= 0){
+            alert("Please Enter a quantity")
+            return
+        }
+
+        const id = Number(addToCartbtn.dataset.id)
+        addToCart(id, quantity)
+    })
+
+    cartItemContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button')
+        if(!btn) return
+        const id = Number(btn.dataset.id)
+        removeFromCart(id)
+    })
 })
 
 function renderAll(){
     renderHome()
+    renderShoppingCartPage()
 }
 
 function renderHome(){
@@ -343,6 +359,60 @@ function featureProducts(){
         container.append(clone)
     }
 }
+
+function renderShoppingCartPage(){
+    renderShoppingCartItems()
+    renderShippingSummary()
+}
+
+function renderShoppingCartItems(){
+    const cart = JSON.parse(localStorage.getItem(CART_KEY)) || []
+    const itemsContainer = $('#items-container')
+    const shoppingHeaders = $('#shopping-headers')
+
+    itemsContainer.querySelectorAll('.cart-item, .cart-empty').forEach(i => i.remove())
+
+    if(cart.length == 0){
+        const shoppingEmpty = C('tr')
+        shoppingEmpty.className = 'cart-empty'
+        const cell = C('td')
+        cell.colSpan = 4
+        cell.textContent = "Shopping Cart Empty"
+        cell.className = 'text-center text-2xl h-[50vh]'
+        shoppingEmpty.appendChild(cell)
+        shoppingHeaders.classList.add('close-view')
+        itemsContainer.appendChild(shoppingEmpty)
+    }
+    else{
+        shoppingHeaders.classList.remove('close-view')
+    }
+
+    for(let item of cart){
+        for(let p of products){
+            if(item.id == p.id){
+                const template = $('#cart-item-template')
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('.product-img').src = p.thumbnail
+                clone.querySelector('.product-img').alt = p.title
+                clone.querySelector('.product-title').textContent = p.title
+                clone.querySelector('.item-price').textContent = `$${p.price}`
+                clone.querySelector('.item-quantity').textContent = item.quantity
+                clone.querySelector('.item-subtotal').textContent = `$${(p.price * item.quantity).toFixed(2)}`
+                clone.querySelector('.remove-btn').dataset.id = item.id
+                itemsContainer.appendChild(clone)
+
+            }
+        }
+    }
+    
+}
+
+function renderShippingSummary(){
+
+}
+
+
+
 
 
 
