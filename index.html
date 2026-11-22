@@ -231,19 +231,44 @@
                         <td class="item-subtotal text-right"></td>
                     </tr>
                 </template>
-                <div id="cart-payment" class="flex justify-evenly">
-                    <div id="cart-shipping">
-                        <h3>Shipping</h3>
-                        <div class="bg-gray-200 p-5">
-                            <select id="shipping-opt">
-                                <option>Standard</option>
-                                <option>Express</option>
-                                <option>Priority</option>
+                <div id="cart-payment" class="flex justify-evenly gap-10 mt-5">
+                    <div id="cart-shipping" class="w-[25vh] flex flex-col gap-4">
+                        <h3 class="font-bold text-center mb-3">Shipping</h3>
+                        <div class="bg-gray-200 p-7 flex flex-col gap-7">
+                            <select id="shipping-opt" class="bg-white py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                <option value="standard">Standard</option>
+                                <option value="express">Express</option>
+                                <option value="priority">Priority</option>
+                            </select>
+                            <select class="bg-white p-2 disabled:cursor-not-allowed disabled:opacity-50" id="destination">
+                                <option value="CA">Canada</option>
+                                <option value="US">United States</option>
+                                <option value="INT">International</option>
                             </select>
                         </div>
                     </div>
-                    <div id="cart-summary">
-                        <h3>Summary</h3>
+                    <div id="cart-summary" class="w-[70vh] flex flex-col gap-4">
+                        <h3 class="font-bold text-center mb-3">Summary</h3>
+                        <div class="border-2 p-4 flex flex-col gap-5">
+                            <div class="flex justify-between">
+                                <p>Merchandise</p>
+                                <p id="cart-cost"></p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p>Shipping</p>
+                                <p id="cart-shipping-cost"></p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p>Tax</p>
+                                <p id="cart-tax"></p>
+                            </div>
+                            <div class="flex justify-between">
+                                <p class="font-bold">Total</p>
+                                <p id="cart-total"></p>
+                            </div>
+                        </div>
+                        <button id="checkout-btn" class="p-3 bg-green-400 w-[20%] self-center rounded-2xl font-bold cursor-pointer hover:bg-green-300 disabled:cursor-not-allowed disabled:opacity-50">Checkout</button>
+                        
                     </div>
 
                 </div>

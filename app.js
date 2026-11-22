@@ -13,6 +13,16 @@ function C(element){
     return document.createElement(element)
 }
 
+/*load the saved cart, or an empty one*/
+function getCart(){
+    return JSON.parse(localStorage.getItem(CART_KEY)) || []
+}
+
+/*save the cart to localStorage*/
+function saveCart(cart){
+    localStorage.setItem(CART_KEY, JSON.stringify(cart))
+}
+
 
 document.addEventListener("DOMContentLoaded", () =>{
     const cache = localStorage.getItem(STORAGE_KEY)
@@ -53,7 +63,9 @@ document.addEventListener("DOMContentLoaded", () =>{
     const quantityInput = $('#quantity')
     const cartItemContainer = $('#items-container')
     const featureContainer = $('#feature-container')
-
+    const shippingOptions = $('#shipping-opt')
+    const shippingDestinations = $('#destination')
+    const checkoutBtn = $('#checkout-btn')
     updateCartCount()
   
     headers.forEach(h => h.addEventListener('click', switchView))
@@ -180,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () =>{
     function addToCart(id, quantity){
         
         //load the saved cart, or start with an empty one
-        const cart = JSON.parse(localStorage.getItem(CART_KEY)) || []
+        const cart = getCart()
 
         //if the product is already in the cart, add to its quantity
         const existing = cart.find(item => item.id === id)
@@ -191,16 +203,16 @@ document.addEventListener("DOMContentLoaded", () =>{
             cart.push({ id: id, quantity: quantity })
         }
 
-        localStorage.setItem(CART_KEY, JSON.stringify(cart))
-        renderShoppingCartItems()
+        saveCart(cart)
+        renderShoppingCartPage()
         updateCartCount()
         
     }
     function removeFromCart(id){
-        const cart = JSON.parse(localStorage.getItem(CART_KEY))
+        const cart = getCart()
         const updateCart = cart.filter(item => item.id != id)
-        localStorage.setItem(CART_KEY, JSON.stringify(updateCart))
-        renderShoppingCartItems()
+        saveCart(updateCart)
+        renderShoppingCartPage()
         updateCartCount()
     
     }
@@ -208,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () =>{
     function updateCartCount(){
         let quantity = 0
         const cartCount = $('#cart-count')
-        const cartArr = JSON.parse(localStorage.getItem(CART_KEY)) || []
+        const cartArr = getCart()
         for(let i of cartArr){
             quantity += i.quantity
         }
@@ -313,7 +325,30 @@ document.addEventListener("DOMContentLoaded", () =>{
         const id = Number(btn.dataset.id)
         removeFromCart(id)
     })
-})
+
+    shippingDestinations.addEventListener('change', renderShippingSummary)
+
+    shippingOptions.addEventListener('change', renderShippingSummary)
+
+    checkoutBtn.addEventListener('click', () => {
+        if(getCart().length == 0) return
+
+        alert('Thank you for your order!')
+
+        //clear the cart
+        saveCart([])
+        renderShoppingCartPage()
+        updateCartCount()
+
+        //return to the home page
+        homePage.classList.remove('close-view')
+        browsePage.classList.add('close-view')
+        categoryPage.classList.add('close-view')
+        aboutPage.classList.add('close-view')
+        singleProductPage.classList.add('close-view')
+        shoppingCartPage.classList.add('close-view')
+        window.scrollTo(0, 0)
+    })})
 
 function renderAll(){
     renderHome()
@@ -366,7 +401,7 @@ function renderShoppingCartPage(){
 }
 
 function renderShoppingCartItems(){
-    const cart = JSON.parse(localStorage.getItem(CART_KEY)) || []
+    const cart = getCart()
     const itemsContainer = $('#items-container')
     const shoppingHeaders = $('#shopping-headers')
 
@@ -408,7 +443,93 @@ function renderShoppingCartItems(){
 }
 
 function renderShippingSummary(){
+    const cart = getCart()
+    const shippingOptions = $('#shipping-opt')
+    const shippingDestinations = $('#destination')
+    const cartItemsCost = $('#cart-cost')
+    const shippingCost = $('#cart-shipping-cost')
+    const taxAmount = $('#cart-tax')
+    const cartTotal = $('#cart-total')
+    const isEmpty = cart.length == 0
+    const checkoutBtn = $('#checkout-btn')
+    let total
+    
+    let merchandiseTotal = 0
+    shippingOptions.disabled = isEmpty
+    shippingDestinations.disabled = isEmpty
+    checkoutBtn.disabled = isEmpty
 
+    //calculate merchandise total
+    for(let item of cart){
+        const p = products.find(p => p.id == item.id)
+        if (p) merchandiseTotal += p.price * item.quantity
+    }
+    cartItemsCost.textContent = `$${merchandiseTotal.toFixed(2)}`
+
+    //calculate shipping cost
+    const destination = shippingDestinations.value
+    const shippingType = shippingOptions.value
+    const shippingTotal = calculateShippingCost(destination, shippingType, merchandiseTotal)
+    shippingCost.textContent = `$${shippingTotal.toFixed(2)}`
+
+    const tax = merchandiseTotal * 0.05
+    taxAmount.textContent = `$${tax.toFixed(2)}`
+
+    total = (merchandiseTotal + tax + shippingTotal).toFixed(2)
+    cartTotal.textContent = `$${total}`
+}
+
+function calculateShippingCost(destination, shippingType, merchandiseTotal){
+    let shippingTotal
+    const cart = getCart()
+    if(merchandiseTotal > 500 || cart.length == 0){
+        shippingTotal = 0
+        return shippingTotal
+    }
+    
+    if(destination == "CA"){
+        
+        if(shippingType == "standard"){
+            shippingTotal = 10
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 25
+        }
+        
+        else{
+            shippingTotal = 35
+        }
+    }
+
+    else if(destination == "US"){
+        if(shippingType == "standard"){
+            shippingTotal = 15
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 25
+        }
+        
+        else{
+            shippingTotal = 50
+        }
+    }
+
+    else{
+        if(shippingType == "standard"){
+            shippingTotal = 20
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 30
+        }
+        
+        else{
+            shippingTotal = 50
+        }
+    }
+    return shippingTotal
 }
 
 
