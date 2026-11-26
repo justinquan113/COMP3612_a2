@@ -313,6 +313,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 function renderAll(){
     renderHome()
     initBrowse()
+    initCategory()
 }
 
 function renderHome(){
@@ -363,7 +364,6 @@ function initBrowse() {
     updBrowse()
 }
 
-// Referenced: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set to use set for populating categories
 function populateCategoryFilters() {
     const catList = $('#filter-category-list')
     catList.innerHTML = ''
@@ -390,54 +390,53 @@ function populateCategoryFilters() {
 }
 
 function initBrowseListeners() {
-    // Click to toggle display and hide
+    // Accordion click to toggle display and hide
     const accordions = document.querySelectorAll('#filter .accordion-header')
-    accordions.forEach(header => {
+    for (let header of accordions) {
         header.addEventListener('click', () => {
-            const body = header.nextElementSibling
+            const body = header.parentNode.querySelector('.accordion-body')
             const icon = header.querySelector('.accordion-icon')
-            const isHidden = body.classList.toggle('close-view')
-            
-            if (isHidden) {
+            body.classList.toggle('close-view')
+
+            if (body.classList.contains('close-view')) {
                 icon.textContent = '▶'
             } else {
                 icon.textContent = '▼'
             }
         })
-    })
+    }
 
     // Name filter
     $('#filter-name').addEventListener('input', (e) => {
-        filterState.name = e.target.value.trim()
+        filterState.name = e.target.value
         updBrowse()
     })
 
-    // Category filter, referenced: https://medium.com/codetodeploy/event-delegation-and-event-handling-in-javascript-bcde9a7208d3
+    // Category filter (event delegation via classList.contains)
     $('#filter-category-list').addEventListener('change', (e) => {
         if (!e.target.classList.contains('category-checkbox')) return
         const category = e.target.value
         if (e.target.checked) {
             filterState.categories.add(category)
-        }
-        else {
+        } else {
             filterState.categories.delete(category)
         }
         updBrowse()
     })
 
-    // Rating filter
-    $('#filter-rating-list').addEventListener('click', (e) => {
-        const option = e.target.closest('.rating-option')
-        if (!option) return
-        
-        const selectedRating = Number(option.dataset.rating)
-        if (filterState.minRating === selectedRating) {
-            filterState.minRating = 0
-        } else {
-            filterState.minRating = selectedRating
-        }
-        updBrowse()
-    })
+    // Rating filter (loop + e.currentTarget.dataset from Lab 9a/9b)
+    const ratingOptions = document.querySelectorAll('#filter-rating-list .rating-option')
+    for (let option of ratingOptions) {
+        option.addEventListener('click', (e) => {
+            const selectedRating = Number(e.currentTarget.dataset.rating)
+            if (filterState.minRating === selectedRating) {
+                filterState.minRating = 0
+            } else {
+                filterState.minRating = selectedRating
+            }
+            updBrowse()
+        })
+    }
 
     // Price under
     $('#filter-price-under').addEventListener('input', (e) => {
@@ -468,22 +467,22 @@ function initBrowseListeners() {
     // Clear All
     $('#clear-all-btn').addEventListener('click', clearAllFilters)
 
-    // Navigate to single product or add to cart
+    // Navigate to single product or add to cart (event delegation via classList.contains)
     $('#browse-grid').addEventListener('click', (e) => {
-        const productLink = e.target.closest('.browse-card-img, .browse-card-title')
-        const cartBtn = e.target.closest('.add-to-cart-btn')
-
-        if (productLink) {
-            const productId = Number(productLink.dataset.id)
+        if (e.target.classList.contains('browse-card-img') || e.target.classList.contains('browse-card-title')) {
+            const productId = Number(e.target.dataset.id)
             $('#browse').classList.add('close-view')
             $('#single-product').classList.remove('close-view')
-        } else if (cartBtn) {
-            const productId = Number(cartBtn.dataset.id)
+            singleProductRender(productId)
+            reviewsAndSpecifications(productId)
+        } else if (e.target.classList.contains('add-to-cart-btn')) {
+            const productId = Number(e.target.dataset.id)
+            addToCart(productId, 1)
         }
     })
 }
 
-function updBrowse () {
+function updBrowse() {
     highlightSelected()
     renderActiveFilters()
     const matchingItems = getMatchingProducts()
@@ -493,10 +492,10 @@ function updBrowse () {
 // Highlights categories selected and selected rating by making them bold
 function highlightSelected() {
     const categoryLabels = document.querySelectorAll('#filter-category-list .category-option')
-    categoryLabels.forEach(label => {
+    for (let label of categoryLabels) {
         const cat = label.dataset.category
         const checkbox = label.querySelector('input')
-        
+
         if (filterState.categories.has(cat)) {
             checkbox.checked = true
             label.classList.add('font-bold')
@@ -504,21 +503,23 @@ function highlightSelected() {
             checkbox.checked = false
             label.classList.remove('font-bold')
         }
-    })
+    }
 
     const ratingOptions = document.querySelectorAll('#filter-rating-list .rating-option')
-    ratingOptions.forEach(option => {
+    for (let option of ratingOptions) {
         const rating = Number(option.dataset.rating)
-        
+
         if (filterState.minRating === rating) {
-            option.classList.add('font-bold', 'underline')
+            option.classList.add('font-bold')
+            option.classList.add('underline')
         } else {
-            option.classList.remove('font-bold', 'underline')
+            option.classList.remove('font-bold')
+            option.classList.remove('underline')
         }
-    })
+    }
 }
 
-// Filter and sort the array
+// Filter and sort the array (compare function pattern from Lab 10 Ex 10.1)
 function getMatchingProducts() {
     return products
         .filter(p => {
@@ -541,11 +542,29 @@ function getMatchingProducts() {
         })
         .sort((a, b) => {
             if (filterState.sortBy === 'name') {
-                return a.title.localeCompare(b.title)
+                if (a.title.toLowerCase() < b.title.toLowerCase()) {
+                    return -1
+                } else if (a.title.toLowerCase() > b.title.toLowerCase()) {
+                    return 1
+                } else {
+                    return 0
+                }
             } else if (filterState.sortBy === 'price') {
-                return a.price - b.price
+                if (a.price < b.price) {
+                    return -1
+                } else if (a.price > b.price) {
+                    return 1
+                } else {
+                    return 0
+                }
             } else if (filterState.sortBy === 'category') {
-                return a.category.localeCompare(b.category)
+                if (a.category.toLowerCase() < b.category.toLowerCase()) {
+                    return -1
+                } else if (a.category.toLowerCase() > b.category.toLowerCase()) {
+                    return 1
+                } else {
+                    return 0
+                }
             }
             return 0
         })
@@ -658,4 +677,51 @@ function renderBrowseGrid(list) {
 
         grid.appendChild(clone)
     }
+}
+
+// Start Category Functions:
+
+function initCategory() {
+    renderCategories()
+}
+
+/* Populate all unique categories using Set and product thumbnails */
+function renderCategories() {
+    const grid = $('#category-grid')
+    const template = $('#category-card-template')
+    grid.innerHTML = ''
+
+    const seenCategories = new Set()
+
+    for (let p of products) {
+        if (!seenCategories.has(p.category)) {
+            seenCategories.add(p.category)
+
+            const clone = template.content.cloneNode(true)
+            const card = clone.querySelector('.category-card')
+            const img = clone.querySelector('.category-img')
+            const name = clone.querySelector('.category-name')
+
+            card.dataset.category = p.category
+            img.src = p.thumbnail
+            img.alt = p.category
+            name.textContent = p.category.split('-').join(' ')
+
+            card.addEventListener('click', openCategory)
+
+            grid.appendChild(clone)
+        }
+    }
+}
+
+/* Clicking a category card opens Browse filtered to that category */
+function openCategory(e) {
+    const selectedCategory = e.currentTarget.dataset.category
+
+    clearAllFilters()
+    filterState.categories.add(selectedCategory)
+    updBrowse()
+
+    $('#category').classList.add('close-view')
+    $('#browse').classList.remove('close-view')
 }
