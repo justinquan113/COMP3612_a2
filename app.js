@@ -129,114 +129,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
 
-    /*navigation for a single product*/
-    function breadCrumb(prod_id){
-        const container = $('#breadcrumb')
-        const template = $('#breadcrumb-container')
-        const clone = template.content.cloneNode(true)
-        const old = container.querySelector('ol')
-        if (old) old.remove()
-        for(let p of products){
-            if(p.id == prod_id){
-                clone.querySelector('#breadcrumb-home').textContent = 'Home'
-                clone.querySelector('#arrow').textContent = ' > '
-                clone.querySelector('#breadcrumb-category').textContent = `${p.category}`
-                clone.querySelector('#arrow1').textContent = ' > '
-                clone.querySelector('#breadcrumb-title').textContent = p.title
-                
-                container.appendChild(clone)
-            }
-        }
-    }
-    
-    /*renders a single product*/
-    function singleProductRender(prod_id){
-
-        //knows which product to add to cart
-        $('#addtocart').dataset.id = prod_id
-        breadCrumb(prod_id)
-        const prodImg = $('#prod-img')
-        const prodDesc = $('#prod-details')
-        const template = $('#prod-template')
-
-        //clear previous image to prevent stacking images
-        prodImg.textContent = ''
-
-        //replace previous template with new one
-        prodDesc.replaceChildren(template)
-
-        for(let p of products){
-            if(p.id == prod_id){
-                const img = C('img')
-                img.src = p.images[0]
-                img.className = 'w-full h-full object-contain'
-                prodImg.appendChild(img)
-                
-                const clone = template.content.cloneNode(true)
-                clone.querySelector('#prod-title').textContent = p.title
-                clone.querySelector('#prod-price').textContent = `$${p.price}`
-                clone.querySelector('#prod-sku').textContent = `SKU: ${p.sku}`
-                clone.querySelector('#prod-rating').textContent = `rating: ${p.rating}`
-                const tagsDiv = clone.querySelector('#tags')
-                for(let tag of p.tags){
-                    const span = C('span')
-                    span.textContent = tag
-                    span.className = 'border p-1 bg-green-100 rounded-md'
-                    tagsDiv.appendChild(span)
-                }
-
-                if(p.stock > 0){
-                    clone.querySelector("#prod-stock").textContent = "In Stock"
-                }
-                else{
-                    clone.querySelector("#prod-stock").textContent = "Out of Stock"
-                }
-
-                clone.querySelector('#prod-description').textContent = p.description
-                prodDesc.appendChild(clone)
-            }
-        }       
-    }
-
-    /*add a product to the cart saved in localStorage*/
-    function addToCart(id, quantity){
-        
-        //load the saved cart, or start with an empty one
-        const cart = getCart()
-
-        //if the product is already in the cart, add to its quantity
-        const existing = cart.find(item => item.id === id)
-        if(existing){
-            existing.quantity += quantity
-        }
-        else{
-            cart.push({ id: id, quantity: quantity })
-        }
-
-        saveCart(cart)
-        renderShoppingCartPage()
-        updateCartCount()
-        
-    }
-    function removeFromCart(id){
-        const cart = getCart()
-        const updateCart = cart.filter(item => item.id != id)
-        saveCart(updateCart)
-        renderShoppingCartPage()
-        updateCartCount()
-    
-    }
-  
-    function updateCartCount(){
-        let quantity = 0
-        const cartCount = $('#cart-count')
-        const cartArr = getCart()
-        for(let i of cartArr){
-            quantity += i.quantity
-        }
-        cartCount.textContent = quantity
-    }
-    
     const activeTab = ['bg-stone-600', 'text-white']
     const inactiveTab = ['hover:bg-stone-600', 'hover:text-white']
 
@@ -249,45 +141,6 @@ document.addEventListener("DOMContentLoaded", () =>{
 
         showContent.classList.remove('close-view')
         hideContent.classList.add('close-view')
-    }
-
-    /*renders review and specifications of a single product*/
-    function reviewsAndSpecifications(prod_id){
-        const weight = $('#weight')
-        const width = $('#width')
-        const height = $('#height')
-        const depth = $('#depth')
-        const shipping = $('#shipping')
-        const returns = $('#return')
-        const warranty = $('#warranty')
-        for(let p of products){
-            if(p.id == prod_id){
-                /*specification section*/
-                weight.textContent = `${p.weight} lbs`
-                width.textContent = `${p.dimensions.width} cm`
-                height.textContent = `${p.dimensions.height} cm`
-                depth.textContent =`${p.dimensions.depth} cm`
-                shipping.textContent = p.shippingInformation
-                returns.textContent = p.returnPolicy
-                warranty.textContent = p.warrantyInformation
-
-                /*review section*/
-                const container = $('#reviews-content')
-                //remove the previous product's reviews (but keep the template)
-                container.querySelectorAll('.review-card').forEach(card => card.remove())
-
-                for(let review of p.reviews){
-                    const template = $('#review-template')
-                    const clone = template.content.cloneNode(true)
-                    clone.querySelector('.review-name').textContent = review.reviewerName
-                    clone.querySelector('.review-rating').textContent = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)
-                    clone.querySelector('.review-email').textContent = review.reviewerEmail
-                    clone.querySelector('.review-date').textContent = new Date(review.date).toLocaleDateString()
-                    clone.querySelector('.review-comment').textContent = review.comment
-                    container.appendChild(clone)
-                }
-            }
-        }
     }
 
     //clicking the browse button goes to the browse page
@@ -359,6 +212,152 @@ document.addEventListener("DOMContentLoaded", () =>{
         shoppingCartPage.classList.add('close-view')
         window.scrollTo(0, 0)
     })})
+
+function breadCrumb(prod_id){
+    const container = $('#breadcrumb')
+    const template = $('#breadcrumb-container')
+    const clone = template.content.cloneNode(true)
+    const old = container.querySelector('ol')
+    if (old) old.remove()
+    for(let p of products){
+        if(p.id == prod_id){
+            clone.querySelector('#breadcrumb-home').textContent = 'Home'
+            clone.querySelector('#arrow').textContent = ' > '
+            clone.querySelector('#breadcrumb-category').textContent = `${p.category}`
+            clone.querySelector('#arrow1').textContent = ' > '
+            clone.querySelector('#breadcrumb-title').textContent = p.title
+            
+            container.appendChild(clone)
+        }
+    }
+}
+
+/*renders a single product*/
+function singleProductRender(prod_id){
+
+    //knows which product to add to cart
+    $('#addtocart').dataset.id = prod_id
+    breadCrumb(prod_id)
+    const prodImg = $('#prod-img')
+    const prodDesc = $('#prod-details')
+    const template = $('#prod-template')
+
+    //clear previous image to prevent stacking images
+    prodImg.textContent = ''
+
+    //replace previous template with new one
+    prodDesc.replaceChildren(template)
+
+    for(let p of products){
+        if(p.id == prod_id){
+            const img = C('img')
+            img.src = p.images[0]
+            img.className = 'w-full h-full object-contain'
+            prodImg.appendChild(img)
+            
+            const clone = template.content.cloneNode(true)
+            clone.querySelector('#prod-title').textContent = p.title
+            clone.querySelector('#prod-price').textContent = `$${p.price}`
+            clone.querySelector('#prod-sku').textContent = `SKU: ${p.sku}`
+            clone.querySelector('#prod-rating').textContent = `rating: ${p.rating}`
+            const tagsDiv = clone.querySelector('#tags')
+            for(let tag of p.tags){
+                const span = C('span')
+                span.textContent = tag
+                span.className = 'border p-1 bg-green-100 rounded-md'
+                tagsDiv.appendChild(span)
+            }
+
+            if(p.stock > 0){
+                clone.querySelector("#prod-stock").textContent = "In Stock"
+            }
+            else{
+                clone.querySelector("#prod-stock").textContent = "Out of Stock"
+            }
+
+            clone.querySelector('#prod-description').textContent = p.description
+            prodDesc.appendChild(clone)
+        }
+    }       
+}
+
+/*add a product to the cart saved in localStorage*/
+function addToCart(id, quantity){
+    
+    //load the saved cart, or start with an empty one
+    const cart = getCart()
+
+    //if the product is already in the cart, add to its quantity
+    const existing = cart.find(item => item.id === id)
+    if(existing){
+        existing.quantity += quantity
+    }
+    else{
+        cart.push({ id: id, quantity: quantity })
+    }
+
+    saveCart(cart)
+    renderShoppingCartPage()
+    updateCartCount()
+    
+}
+function removeFromCart(id){
+    const cart = getCart()
+    const updateCart = cart.filter(item => item.id != id)
+    saveCart(updateCart)
+    renderShoppingCartPage()
+    updateCartCount()
+
+}
+
+function updateCartCount(){
+    let quantity = 0
+    const cartCount = $('#cart-count')
+    const cartArr = getCart()
+    for(let i of cartArr){
+        quantity += i.quantity
+    }
+    cartCount.textContent = quantity
+}
+
+/*renders review and specifications of a single product*/
+function reviewsAndSpecifications(prod_id){
+    const weight = $('#weight')
+    const width = $('#width')
+    const height = $('#height')
+    const depth = $('#depth')
+    const shipping = $('#shipping')
+    const returns = $('#return')
+    const warranty = $('#warranty')
+    for(let p of products){
+        if(p.id == prod_id){
+            /*specification section*/
+            weight.textContent = `${p.weight} lbs`
+            width.textContent = `${p.dimensions.width} cm`
+            height.textContent = `${p.dimensions.height} cm`
+            depth.textContent =`${p.dimensions.depth} cm`
+            shipping.textContent = p.shippingInformation
+            returns.textContent = p.returnPolicy
+            warranty.textContent = p.warrantyInformation
+
+            /*review section*/
+            const container = $('#reviews-content')
+            //remove the previous product's reviews (but keep the template)
+            container.querySelectorAll('.review-card').forEach(card => card.remove())
+
+            for(let review of p.reviews){
+                const template = $('#review-template')
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('.review-name').textContent = review.reviewerName
+                clone.querySelector('.review-rating').textContent = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)
+                clone.querySelector('.review-email').textContent = review.reviewerEmail
+                clone.querySelector('.review-date').textContent = new Date(review.date).toLocaleDateString()
+                clone.querySelector('.review-comment').textContent = review.comment
+                container.appendChild(clone)
+            }
+        }
+    }
+}
 
 function renderAll(){
     renderHome()
