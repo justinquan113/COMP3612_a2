@@ -1,3 +1,4 @@
+
 /*get html element*/
 function $(element){
     return document.querySelector(element)
@@ -7,6 +8,17 @@ function $(element){
 function C(element){
     return document.createElement(element)
 }
+
+/*load the saved cart, or an empty one*/
+function getCart(){
+    return JSON.parse(localStorage.getItem(CART_KEY)) || []
+}
+
+/*save the cart to localStorage*/
+function saveCart(cart){
+    localStorage.setItem(CART_KEY, JSON.stringify(cart))
+}
+
 
 const url = 'https://dummyjson.com/products?limit=100'
 const STORAGE_KEY = 'products'
@@ -53,15 +65,19 @@ document.addEventListener("DOMContentLoaded", () =>{
     const singleProductPage = $('#single-product')
     const shoppingCartPage = $('#cart-page')
     const browseBtn = $('#browse-btn')
-    
-    //clicking the browse button goes to the browse page
-    browseBtn.addEventListener('click', () => {
-        homePage.classList.add('close-view')
-        browsePage.classList.remove('close-view')
-    })
-
+    const specificationsbtn = $('#specifics')
+    const reviewbtn = $('#reviews')
+    const specsContent = $('#specs-content')
+    const reviewsContent = $('#reviews-content')
+    const addToCartbtn = $('#addtocart')
+    const quantityInput = $('#quantity')
+    const cartItemContainer = $('#items-container')
+    const featureContainer = $('#feature-container')
+    const shippingOptions = $('#shipping-opt')
+    const shippingDestinations = $('#destination')
+    const checkoutBtn = $('#checkout-btn')
     updateCartCount()
-
+  
     headers.forEach(h => h.addEventListener('click', switchView))
 
     /*switch views between pages*/
@@ -113,22 +129,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
 
-    const featureContainer = $('#feature-container')
-
-    //clicking a view product button goes to single product page 
-    featureContainer.addEventListener('click', (e) => {
-        const btn = e.target.closest('button')
-        if(!btn) return
-        const id = btn.dataset.id
-        homePage.classList.add('close-view')
-        singleProductPage.classList.remove('close-view')
-        singleProductRender(id)
-        reviewsAndSpecifications(id)
-
-        //switching views keeps the old scroll position, so jump back to the top
-        window.scrollTo(0, 0)
-    })
-    
     /*navigation for a single product*/
     function breadCrumb(prod_id){
         const container = $('#breadcrumb')
@@ -198,24 +198,11 @@ document.addEventListener("DOMContentLoaded", () =>{
         }       
     }
 
-    const addToCartbtn = $('#addtocart')
-    const quantityInput = $('#quantity')
-    addToCartbtn.addEventListener('click', () => {
-        const quantity = Number(quantityInput.value)
-        if(!Number.isInteger(quantity) || quantity <= 0){
-            alert("Please Enter a quantity")
-            return
-        }
-
-        const id = Number(addToCartbtn.dataset.id)
-        addToCart(id, quantity)
-    })
-
     /*add a product to the cart saved in localStorage*/
     function addToCart(id, quantity){
         
         //load the saved cart, or start with an empty one
-        const cart = JSON.parse(localStorage.getItem(CART_KEY)) || []
+        const cart = getCart()
 
         //if the product is already in the cart, add to its quantity
         const existing = cart.find(item => item.id === id)
@@ -226,27 +213,29 @@ document.addEventListener("DOMContentLoaded", () =>{
             cart.push({ id: id, quantity: quantity })
         }
 
-        localStorage.setItem(CART_KEY, JSON.stringify(cart))
+        saveCart(cart)
+        renderShoppingCartPage()
         updateCartCount()
         
     }
-
+    function removeFromCart(id){
+        const cart = getCart()
+        const updateCart = cart.filter(item => item.id != id)
+        saveCart(updateCart)
+        renderShoppingCartPage()
+        updateCartCount()
+    
+    }
+  
     function updateCartCount(){
         let quantity = 0
         const cartCount = $('#cart-count')
-        const cartArr = JSON.parse(localStorage.getItem(CART_KEY)) || []
+        const cartArr = getCart()
         for(let i of cartArr){
             quantity += i.quantity
         }
         cartCount.textContent = quantity
     }
-
-
-    const specificationsbtn = $('#specifics')
-    const reviewbtn = $('#reviews')
-    const specsContent = $('#specs-content')
-    const reviewsContent = $('#reviews-content')
-
     
     const activeTab = ['bg-stone-600', 'text-white']
     const inactiveTab = ['hover:bg-stone-600', 'hover:text-white']
@@ -261,13 +250,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         showContent.classList.remove('close-view')
         hideContent.classList.add('close-view')
     }
-
-    specificationsbtn.addEventListener('click', () => {
-        selectTab(specificationsbtn, reviewbtn, specsContent, reviewsContent)
-    })
-    reviewbtn.addEventListener('click', () => {
-        selectTab(reviewbtn, specificationsbtn, reviewsContent, specsContent)
-    })
 
     /*renders review and specifications of a single product*/
     function reviewsAndSpecifications(prod_id){
@@ -308,10 +290,79 @@ document.addEventListener("DOMContentLoaded", () =>{
         }
     }
 
-})
+    //clicking the browse button goes to the browse page
+    browseBtn.addEventListener('click', () => {
+        homePage.classList.add('close-view')
+        browsePage.classList.remove('close-view')
+    })
+
+    //clicking a view product button goes to single product page 
+    featureContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button')
+        if(!btn) return
+        const id = btn.dataset.id
+        homePage.classList.add('close-view')
+        singleProductPage.classList.remove('close-view')
+        singleProductRender(id)
+        reviewsAndSpecifications(id)
+
+        //switching views keeps the old scroll position, so jump back to the top
+        window.scrollTo(0, 0)
+    })
+
+    specificationsbtn.addEventListener('click', () => {
+        selectTab(specificationsbtn, reviewbtn, specsContent, reviewsContent)
+    })
+
+    reviewbtn.addEventListener('click', () => {
+        selectTab(reviewbtn, specificationsbtn, reviewsContent, specsContent)
+    })
+
+    addToCartbtn.addEventListener('click', () => {
+        const quantity = Number(quantityInput.value)
+        if(!Number.isInteger(quantity) || quantity <= 0){
+            alert("Please Enter a quantity")
+            return
+        }
+
+        const id = Number(addToCartbtn.dataset.id)
+        addToCart(id, quantity)
+    })
+
+    cartItemContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button')
+        if(!btn) return
+        const id = Number(btn.dataset.id)
+        removeFromCart(id)
+    })
+
+    shippingDestinations.addEventListener('change', renderShippingSummary)
+
+    shippingOptions.addEventListener('change', renderShippingSummary)
+
+    checkoutBtn.addEventListener('click', () => {
+        if(getCart().length == 0) return
+
+        alert('Thank you for your order!')
+
+        //clear the cart
+        saveCart([])
+        renderShoppingCartPage()
+        updateCartCount()
+
+        //return to the home page
+        homePage.classList.remove('close-view')
+        browsePage.classList.add('close-view')
+        categoryPage.classList.add('close-view')
+        aboutPage.classList.add('close-view')
+        singleProductPage.classList.add('close-view')
+        shoppingCartPage.classList.add('close-view')
+        window.scrollTo(0, 0)
+    })})
 
 function renderAll(){
     renderHome()
+    renderShoppingCartPage()
     initBrowse()
 }
 
@@ -354,6 +405,146 @@ function featureProducts(){
         container.append(clone)
     }
 }
+
+function renderShoppingCartPage(){
+    renderShoppingCartItems()
+    renderShippingSummary()
+}
+
+function renderShoppingCartItems(){
+    const cart = getCart()
+    const itemsContainer = $('#items-container')
+    const shoppingHeaders = $('#shopping-headers')
+
+    itemsContainer.querySelectorAll('.cart-item, .cart-empty').forEach(i => i.remove())
+
+    if(cart.length == 0){
+        const shoppingEmpty = C('tr')
+        shoppingEmpty.className = 'cart-empty'
+        const cell = C('td')
+        cell.colSpan = 4
+        cell.textContent = "Shopping Cart Empty"
+        cell.className = 'text-center text-2xl h-[50vh]'
+        shoppingEmpty.appendChild(cell)
+        shoppingHeaders.classList.add('close-view')
+        itemsContainer.appendChild(shoppingEmpty)
+    }
+    else{
+        shoppingHeaders.classList.remove('close-view')
+    }
+
+    for(let item of cart){
+        for(let p of products){
+            if(item.id == p.id){
+                const template = $('#cart-item-template')
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('.product-img').src = p.thumbnail
+                clone.querySelector('.product-img').alt = p.title
+                clone.querySelector('.product-title').textContent = p.title
+                clone.querySelector('.item-price').textContent = `$${p.price}`
+                clone.querySelector('.item-quantity').textContent = item.quantity
+                clone.querySelector('.item-subtotal').textContent = `$${(p.price * item.quantity).toFixed(2)}`
+                clone.querySelector('.remove-btn').dataset.id = item.id
+                itemsContainer.appendChild(clone)
+
+            }
+        }
+    }
+    
+}
+
+function renderShippingSummary(){
+    const cart = getCart()
+    const shippingOptions = $('#shipping-opt')
+    const shippingDestinations = $('#destination')
+    const cartItemsCost = $('#cart-cost')
+    const shippingCost = $('#cart-shipping-cost')
+    const taxAmount = $('#cart-tax')
+    const cartTotal = $('#cart-total')
+    const isEmpty = cart.length == 0
+    const checkoutBtn = $('#checkout-btn')
+    let total
+    
+    let merchandiseTotal = 0
+    shippingOptions.disabled = isEmpty
+    shippingDestinations.disabled = isEmpty
+    checkoutBtn.disabled = isEmpty
+
+    //calculate merchandise total
+    for(let item of cart){
+        const p = products.find(p => p.id == item.id)
+        if (p) merchandiseTotal += p.price * item.quantity
+    }
+    cartItemsCost.textContent = `$${merchandiseTotal.toFixed(2)}`
+
+    //calculate shipping cost
+    const destination = shippingDestinations.value
+    const shippingType = shippingOptions.value
+    const shippingTotal = calculateShippingCost(destination, shippingType, merchandiseTotal)
+    shippingCost.textContent = `$${shippingTotal.toFixed(2)}`
+
+    const tax = merchandiseTotal * 0.05
+    taxAmount.textContent = `$${tax.toFixed(2)}`
+
+    total = (merchandiseTotal + tax + shippingTotal).toFixed(2)
+    cartTotal.textContent = `$${total}`
+}
+
+function calculateShippingCost(destination, shippingType, merchandiseTotal){
+    let shippingTotal
+    const cart = getCart()
+    if(merchandiseTotal > 500 || cart.length == 0){
+        shippingTotal = 0
+        return shippingTotal
+    }
+    
+    if(destination == "CA"){
+        
+        if(shippingType == "standard"){
+            shippingTotal = 10
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 25
+        }
+        
+        else{
+            shippingTotal = 35
+        }
+    }
+
+    else if(destination == "US"){
+        if(shippingType == "standard"){
+            shippingTotal = 15
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 25
+        }
+        
+        else{
+            shippingTotal = 50
+        }
+    }
+
+    else{
+        if(shippingType == "standard"){
+            shippingTotal = 20
+        }
+
+        else if(shippingType == "express"){
+            shippingTotal = 30
+        }
+        
+        else{
+            shippingTotal = 50
+        }
+    }
+    return shippingTotal
+}
+
+
+
 
 // Start Browse Functions:
 
