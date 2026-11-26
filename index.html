@@ -6,7 +6,7 @@
     <title>Store</title>
     <link rel="stylesheet" href="output.css">
     
-    <script defer src="app.js"></script>
+    <script src="app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -93,7 +93,7 @@
                     <div class="border rounded-xl p-3 bg-gray-100">
                         <div class="accordion-header flex justify-between items-center cursor-pointer">
                             <span>Name</span>
-                            <span class="accordion-icon">+</span>
+                            <span class="accordion-icon">▼</span>
                         </div>
                         <div class="accordion-body my-3">
                             <input id="filter-name" type="text" placeholder="Search product name"
@@ -105,7 +105,7 @@
                     <div class="border rounded-xl p-3 bg-gray-100">
                         <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
                             <span>Category</span>
-                            <span class="accordion-icon">+</span>
+                            <span class="accordion-icon">▼</span>
                         </div>
                         <div id="filter-category-list" class="accordion-body my-3 flex flex-col gap-2">
                             <!-- Dynamically populated -->
@@ -142,7 +142,7 @@
                     <div class="border rounded-xl p-3 bg-gray-100">
                         <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
                             <span>Price</span>
-                            <span class="accordion-icon">+</span>
+                            <span class="accordion-icon">▼</span>
                         </div>
                         <div class="accordion-body my-3 flex flex-col gap-2.5">
                             <label class="flex justify-between items-center gap-2">
@@ -210,7 +210,29 @@
 
         <!-- Category Page starts here -->
         <article id="category" class="close-view">
-            <p>Category</p>
+            <div class="flex flex-col">
+                <!-- Hero Image + Title -->
+                <div class="h-[30vh] flex flex-col justify-center items-center bg-stone-200 overflow-hidden" style="position: relative;">
+                    <img class="w-full h-full object-cover" src="images/wood.jpg" alt="Categories Hero">
+                    <h1 class="text-3xl font-bold text-white px-6 py-3 rounded-xl" style="position: absolute; background-color: rgba(0, 0, 0, 0.5);">
+                        Shop by Category
+                    </h1>
+                </div>
+
+                <!-- Category Cards Grid -->
+                <div class="p-8 bg-gray-100">
+                    <div id="category-grid" class="flex gap-5 justify-center" style="flex-wrap: wrap;"></div>
+
+                    <template id="category-card-template">
+                        <div class="category-card border w-[20%] flex flex-col overflow-hidden rounded-2xl bg-white cursor-pointer" data-category="">
+                            <img class="category-img w-full object-contain p-4" style="height: 180px;">
+                            <div class="bg-white border-t p-3">
+                                <p class="category-name text-center capitalize font-bold"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </article>
 
         <!-- About Page starts here -->
