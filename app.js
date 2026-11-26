@@ -717,8 +717,10 @@ function getMatchingProducts() {
             if (filterState.name && !p.title.toLowerCase().includes(filterState.name.toLowerCase())) {
                 return false
             }
-            if (filterState.categories.size > 0 && !filterState.categories.has(p.category)) {
-                return false
+            for (let cat of filterState.categories) {
+                if (p.category !== cat) {
+                    return false
+                }
             }
             if (filterState.minRating > 0 && p.rating < filterState.minRating) {
                 return false
