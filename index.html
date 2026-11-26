@@ -6,7 +6,7 @@
     <title>Store</title>
     <link rel="stylesheet" href="output.css">
     
-    <script type="module" src="app.js"></script>
+    <script defer src="app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
         <article id="home" class="close-view">
             <div class="flex flex-col">
                 <div class="h-[50vh]">
-                    <img class="w-full h-full object-cover" src="/images/wood.jpg">
+                    <img class="w-full h-full object-cover" src="images/wood.jpg">
                 </div>
                 <div class="py-10 px-20 bg-gray-100 h-[45vh]">
                     <h1 class="mb-5 text-2xl">Essentials</h1>
@@ -80,17 +80,133 @@
                 </div>
             </div>
         </article>
-
+        
         <!-- Browse Page starts here -->
-        <article id="browse" class="close-view">
-            <div id="departments">
-                <h2>Departments</h2>
-            </div>
+        <article id="browse" class="close-view p-10">
+            <h1 class="text-3xl font-bold mb-5">Browse</h1>
+            <div class="flex gap-8">
+                <!-- Sidebar -->
+                <section id="filter" class="w-[20%] flex flex-col gap-4">
+                    <h2 class="text-2xl font-bold mb-3">Departments</h2>
 
-            <div>
-                <h2>other</h2>
+                    <!-- Name -->
+                    <div class="border rounded-xl p-3 bg-gray-100">
+                        <div class="accordion-header flex justify-between items-center cursor-pointer">
+                            <span>Name</span>
+                            <span class="accordion-icon">+</span>
+                        </div>
+                        <div class="accordion-body my-3">
+                            <input id="filter-name" type="text" placeholder="Search product name"
+                            class="w-full border rounded-xl px-3 py-1">
+                        </div>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="border rounded-xl p-3 bg-gray-100">
+                        <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
+                            <span>Category</span>
+                            <span class="accordion-icon">+</span>
+                        </div>
+                        <div id="filter-category-list" class="accordion-body my-3 flex flex-col gap-2">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="border rounded-xl p-3 bg-gray-100">
+                        <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
+                            <span>Rating</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div id="filter-rating-list" class="accordion-body my-3 flex flex-col gap-2">
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="4">
+                                <span>★★★★☆</span>
+                                <span>4 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="3">
+                                <span>★★★☆☆</span>
+                                <span>3 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="2">
+                                <span>★★☆☆☆</span>
+                                <span>2 & Up</span>
+                            </div>
+                            <div class="rating-option cursor-pointer flex items-center gap-2" data-rating="1">
+                                <span>★☆☆☆☆</span>
+                                <span>1 & Up</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Accordion -->
+                    <div class="border rounded-xl p-3 bg-gray-100">
+                        <div class="accordion-header flex justify-between items-center cursor-pointer font-bold">
+                            <span>Price</span>
+                            <span class="accordion-icon">+</span>
+                        </div>
+                        <div class="accordion-body my-3 flex flex-col gap-2.5">
+                            <label class="flex justify-between items-center gap-2">
+                                <span>Under $</span>
+                                <input id="filter-price-under" type="number" min="0" placeholder="Max" class="w-[50%] border rounded-xl px-3 py-1">
+                            </label>
+                            <label class="flex justify-between items-center gap-2">
+                                <span>Over $</span>
+                                <input id="filter-price-over" type="number" min="0" placeholder="Min" class="w-[50%] border rounded-xl px-3 py-1">
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                 <!-- Main area, show active filters and the products-->
+                <section id="results" class="flex-1 flex flex-col gap-5">
+                    <!-- Top Controls Bar -->
+                    <div class="flex flex-col gap-3 border p-5 rounded-xl bg-gray-100">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2.5">
+                                <span class="font-bold">Results</span>
+                                <button id="clear-all-btn" class="cursor-pointer bg-stone-900 text-white px-3 py-1 rounded hover:bg-stone-700 close-view">
+                                    X Clear All
+                                </button>
+                            </div>
+                            <label class="flex items-center gap-2">
+                                <span class="font-bold">Sort</span>
+                                <select id="sort-select" class="border p-3 rounded bg-white cursor-pointer">
+                                    <option value="name">Product Name (A-Z)</option>
+                                    <option value="price">Price</option>
+                                    <option value="category">Category</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <!-- Active Filters -->
+                        <div id="active-filters" class="flex gap-2.5"></div>
+                    </div>
+
+                    <!-- In case empty -->
+                    <p id="empty-results" class="text-center py-10 close-view">
+                        No products found matching your criteria.
+                    </p>
+
+                    <!-- Results Container -->
+                    <div id="browse-grid" class="flex gap-5" style="flex-wrap: wrap;"></div>
+
+                    <!-- Product Card Template -->
+                    <template id="browse-card-template">
+                        <div class="border w-[20%] flex flex-col overflow-hidden rounded-xl bg-white p-3 justify-between">
+                            <div>
+                                <img class="browse-card-img w-full object-cover cursor-pointer" data-id="">
+                                <h3 class="browse-card-title text-center my-3 font-bold cursor-pointer hover:underline" data-id=""></h3>
+                                <p class="browse-card-price text-center mb-3"></p>
+                            </div>
+                            <button class="add-to-cart-btn self-center cursor-pointer bg-stone-900 text-white px-3 py-1 rounded-2xl hover:bg-stone-700 w-full" data-id="">
+                                + Add to Cart
+                            </button>
+                        </div>
+                    </template>
+                </section>
             </div>
         </article>
+        
 
         <!-- Category Page starts here -->
         <article id="category" class="close-view">

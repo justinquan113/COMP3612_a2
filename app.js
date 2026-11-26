@@ -1,7 +1,3 @@
-const url = 'https://dummyjson.com/products?limit=100'
-const STORAGE_KEY = 'products'
-const CART_KEY = 'cart'
-let products
 
 /*get html element*/
 function $(element){
@@ -23,6 +19,20 @@ function saveCart(cart){
     localStorage.setItem(CART_KEY, JSON.stringify(cart))
 }
 
+
+const url = 'https://dummyjson.com/products?limit=100'
+const STORAGE_KEY = 'products'
+const CART_KEY = 'cart'
+let products
+
+const filterState = {
+    name: '',
+    categories: new Set(),
+    minRating: 0,
+    underPrice: null,
+    overPrice: null,
+    sortBy: 'name' // Default
+}
 
 document.addEventListener("DOMContentLoaded", () =>{
     const cache = localStorage.getItem(STORAGE_KEY)
@@ -353,6 +363,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 function renderAll(){
     renderHome()
     renderShoppingCartPage()
+    initBrowse()
 }
 
 function renderHome(){
@@ -535,5 +546,307 @@ function calculateShippingCost(destination, shippingType, merchandiseTotal){
 
 
 
+// Start Browse Functions:
 
+function initBrowse() {
+    populateCategoryFilters()
+    initBrowseListeners()
+    updBrowse()
+}
 
+// Referenced: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set to use set for populating categories
+function populateCategoryFilters() {
+    const catList = $('#filter-category-list')
+    catList.innerHTML = ''
+
+    const categories = new Set(products.map(p => p.category))
+
+    for (let category of categories) {
+        const label = C('label')
+        label.className = 'flex items-center gap-2 cursor-pointer category-option'
+        label.dataset.category = category
+
+        const checkbox = C('input')
+        checkbox.type = 'checkbox'
+        checkbox.value = category
+        checkbox.className = 'category-checkbox cursor-pointer'
+
+        const span = C('span')
+        span.textContent = category
+
+        label.appendChild(checkbox)
+        label.appendChild(span)
+        catList.appendChild(label)
+    }
+}
+
+function initBrowseListeners() {
+    // Click to toggle display and hide
+    const accordions = document.querySelectorAll('#filter .accordion-header')
+    accordions.forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling
+            const icon = header.querySelector('.accordion-icon')
+            const isHidden = body.classList.toggle('close-view')
+            
+            if (isHidden) {
+                icon.textContent = '▶'
+            } else {
+                icon.textContent = '▼'
+            }
+        })
+    })
+
+    // Name filter
+    $('#filter-name').addEventListener('input', (e) => {
+        filterState.name = e.target.value.trim()
+        updBrowse()
+    })
+
+    // Category filter, referenced: https://medium.com/codetodeploy/event-delegation-and-event-handling-in-javascript-bcde9a7208d3
+    $('#filter-category-list').addEventListener('change', (e) => {
+        if (!e.target.classList.contains('category-checkbox')) return
+        const category = e.target.value
+        if (e.target.checked) {
+            filterState.categories.add(category)
+        }
+        else {
+            filterState.categories.delete(category)
+        }
+        updBrowse()
+    })
+
+    // Rating filter
+    $('#filter-rating-list').addEventListener('click', (e) => {
+        const option = e.target.closest('.rating-option')
+        if (!option) return
+        
+        const selectedRating = Number(option.dataset.rating)
+        if (filterState.minRating === selectedRating) {
+            filterState.minRating = 0
+        } else {
+            filterState.minRating = selectedRating
+        }
+        updBrowse()
+    })
+
+    // Price under
+    $('#filter-price-under').addEventListener('input', (e) => {
+        if (e.target.value !== '') {
+            filterState.underPrice = Number(e.target.value)
+        } else {
+            filterState.underPrice = null
+        }
+        updBrowse()
+    })
+
+    // Price over
+    $('#filter-price-over').addEventListener('input', (e) => {
+        if (e.target.value !== '') {
+            filterState.overPrice = Number(e.target.value)
+        } else {
+            filterState.overPrice = null
+        }
+        updBrowse()
+    })
+
+    // Sort by
+    $('#sort-select').addEventListener('change', (e) => {
+        filterState.sortBy = e.target.value
+        updBrowse()
+    })
+
+    // Clear All
+    $('#clear-all-btn').addEventListener('click', clearAllFilters)
+
+    // Navigate to single product or add to cart
+    $('#browse-grid').addEventListener('click', (e) => {
+        const productLink = e.target.closest('.browse-card-img, .browse-card-title')
+        const cartBtn = e.target.closest('.add-to-cart-btn')
+
+        if (productLink) {
+            const productId = Number(productLink.dataset.id)
+            $('#browse').classList.add('close-view')
+            $('#single-product').classList.remove('close-view')
+        } else if (cartBtn) {
+            const productId = Number(cartBtn.dataset.id)
+        }
+    })
+}
+
+function updBrowse () {
+    highlightSelected()
+    renderActiveFilters()
+    const matchingItems = getMatchingProducts()
+    renderBrowseGrid(matchingItems)
+}
+
+// Highlights categories selected and selected rating by making them bold
+function highlightSelected() {
+    const categoryLabels = document.querySelectorAll('#filter-category-list .category-option')
+    categoryLabels.forEach(label => {
+        const cat = label.dataset.category
+        const checkbox = label.querySelector('input')
+        
+        if (filterState.categories.has(cat)) {
+            checkbox.checked = true
+            label.classList.add('font-bold')
+        } else {
+            checkbox.checked = false
+            label.classList.remove('font-bold')
+        }
+    })
+
+    const ratingOptions = document.querySelectorAll('#filter-rating-list .rating-option')
+    ratingOptions.forEach(option => {
+        const rating = Number(option.dataset.rating)
+        
+        if (filterState.minRating === rating) {
+            option.classList.add('font-bold', 'underline')
+        } else {
+            option.classList.remove('font-bold', 'underline')
+        }
+    })
+}
+
+// Filter and sort the array
+function getMatchingProducts() {
+    return products
+        .filter(p => {
+            if (filterState.name && !p.title.toLowerCase().includes(filterState.name.toLowerCase())) {
+                return false
+            }
+            if (filterState.categories.size > 0 && !filterState.categories.has(p.category)) {
+                return false
+            }
+            if (filterState.minRating > 0 && p.rating < filterState.minRating) {
+                return false
+            }
+            if (filterState.underPrice !== null && p.price > filterState.underPrice) {
+                return false
+            }
+            if (filterState.overPrice !== null && p.price < filterState.overPrice) {
+                return false
+            }
+            return true
+        })
+        .sort((a, b) => {
+            if (filterState.sortBy === 'name') {
+                return a.title.localeCompare(b.title)
+            } else if (filterState.sortBy === 'price') {
+                return a.price - b.price
+            } else if (filterState.sortBy === 'category') {
+                return a.category.localeCompare(b.category)
+            }
+            return 0
+        })
+}
+
+// Render the selected filters, can be removed
+function renderActiveFilters() {
+    const container = $('#active-filters')
+    container.innerHTML = ''
+    let hasActiveFilters = false
+
+    function addChip(label, onRemove) {
+        hasActiveFilters = true
+        const chip = C('button')
+        chip.className = 'cursor-pointer bg-stone-200 text-stone-800 px-3 py-1 rounded-2xl flex items-center gap-1.5 capitalize'
+        chip.textContent = `X ${label}`
+        chip.addEventListener('click', () => {
+            onRemove()
+            updBrowse()
+        })
+        container.appendChild(chip)
+    }
+
+    if (filterState.name) {
+        addChip(`Name: "${filterState.name}"`, () => {
+            filterState.name = ''
+            $('#filter-name').value = ''
+        })
+    }
+
+    for (let cat of filterState.categories) {
+        addChip(cat, () => {
+            filterState.categories.delete(cat)
+        })
+    }
+
+    if (filterState.minRating > 0) {
+        addChip(`${filterState.minRating}★ & Up`, () => {
+            filterState.minRating = 0
+        })
+    }
+
+    if (filterState.underPrice !== null) {
+        addChip(`Under $${filterState.underPrice}`, () => {
+            filterState.underPrice = null
+            $('#filter-price-under').value = ''
+        })
+    }
+
+    if (filterState.overPrice !== null) {
+        addChip(`Over $${filterState.overPrice}`, () => {
+            filterState.overPrice = null
+            $('#filter-price-over').value = ''
+        })
+    }
+
+    if (hasActiveFilters) {
+        $('#clear-all-btn').classList.remove('close-view')
+    } else {
+        $('#clear-all-btn').classList.add('close-view')
+    }
+}
+
+// Clear all
+function clearAllFilters() {
+    filterState.name = ''
+    filterState.categories.clear()
+    filterState.minRating = 0
+    filterState.underPrice = null
+    filterState.overPrice = null
+
+    $('#filter-name').value = ''
+    $('#filter-price-under').value = ''
+    $('#filter-price-over').value = ''
+
+    updBrowse()
+}
+
+// Render the products, or empty
+function renderBrowseGrid(list) {
+    const grid = $('#browse-grid')
+    const template = $('#browse-card-template')
+
+    grid.innerHTML = ''
+
+    if (list.length === 0) {
+        const emptyMsg = C('p')
+        emptyMsg.className = 'text-2xl text-center py-10 w-full'
+        emptyMsg.textContent = 'No products match your selected filters.'
+        grid.appendChild(emptyMsg)
+        return
+    }
+
+    for (let p of list) {
+        const clone = template.content.cloneNode(true)
+        const img = clone.querySelector('.browse-card-img')
+        const title = clone.querySelector('.browse-card-title')
+        const price = clone.querySelector('.browse-card-price')
+        const btn = clone.querySelector('.add-to-cart-btn')
+
+        img.src = p.thumbnail
+        img.alt = p.title
+        img.dataset.id = p.id
+
+        title.textContent = p.title
+        title.dataset.id = p.id
+
+        price.textContent = `$${p.price.toFixed(2)}`
+        btn.dataset.id = p.id
+
+        grid.appendChild(clone)
+    }
+}
