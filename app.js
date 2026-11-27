@@ -133,6 +133,19 @@ document.addEventListener("DOMContentLoaded", () =>{
             shoppingCartPage.classList.add('close-view')
         }
     }
+    $('#about-close-x').addEventListener('click', () => {
+        aboutPage.close()
+    })
+
+    $('#about-close-btn').addEventListener('click', () => {
+        aboutPage.close()
+    })
+
+    aboutPage.addEventListener('click', (e) => {
+        if (e.target === aboutPage) {
+            aboutPage.close()
+        }
+    })
 
     const activeTab = ['bg-stone-600', 'text-white']
     const inactiveTab = ['hover:bg-stone-600', 'hover:text-white']
