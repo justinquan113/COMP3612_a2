@@ -83,6 +83,11 @@ document.addEventListener("DOMContentLoaded", () =>{
     /*switch views between pages*/
     function switchView(e){
         let view = e.target.textContent
+
+        if(view == 'About'){
+            aboutPage.showModal()
+            return
+        }
         if(view == 'Home'){
             homePage.classList.remove('close-view')
             browsePage.classList.add('close-view')

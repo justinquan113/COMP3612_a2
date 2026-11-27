@@ -236,8 +236,55 @@
         </article>
 
         <!-- About Page starts here -->
-        <dialog id="about" class="close-view">
-            <p>about</p>
+        <dialog id="about" class="rounded-2xl border bg-white p-8" style="margin: auto; max-width: 600px; width: 90%;">
+            <div class="flex flex-col gap-5">
+                <!-- Top Header with Upper-Right Close Button -->
+                <div class="flex justify-between items-center border-b-black pb-3" style="border-bottom-width: 1px;">
+                    <h2 class="text-2xl font-bold text-stone-800">About Us</h2>
+                    <button id="about-close-x" class="cursor-pointer font-bold text-2xl px-3 py-1 rounded hover:bg-stone-200" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+
+                <!-- Main Description -->
+                <div class="flex flex-col gap-2">
+                    <h3 class="font-bold text-stone-800">About Us:</h3>
+                    <p class="text-sm text-stone-500">
+                        This is a website created by Paul Novencido and Justin Quan, we created this website as part of COMP 3612, a Web Development course.
+                        It is a website that allows users to shop for products and use filters to do so. We also implemented a shopping cart feature that lets users
+                        keep everything they are considering buying while they are shopping.
+                    </p>
+                </div>
+
+                <!-- Technologies Used -->
+                <div class="flex flex-col gap-2">
+                    <h3 class="font-bold text-stone-800">Technologies Used:</h3>
+                    <p class="text-sm text-stone-500">
+                        To develop this project, we utilized HTML, Javascript, CSS, and Tailwind CSS, to structure elements, and style.
+                        We also utilized DummyJSON API to fetch data, and localStorage for the cart feature to ensure that a user's cart doesn't get randomly reset.
+                    </p>
+                </div>
+
+                <!-- Group Members & GitHub Link -->
+                <div class="flex justify-between gap-4 bg-stone-50 border rounded-xl p-4">
+                    <p class="text-sm text-stone-500">
+                        We have made the GitHub repository available for you to visit at the link below:
+                    </p>
+                    <div class="flex flex-col gap-1">
+                        <h3 class="font-bold text-stone-800">Project Repository</h3>
+                        <a href="https://github.com/justinquan113/COMP3612_a2" target="_blank" class="text-sm underline text-stone-800">
+                            github.com/justinquan113/COMP3612_a2
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bottom-Right Close Button -->
+                <div class="flex" style="justify-content: flex-end;">
+                    <button id="about-close-btn" class="cursor-pointer bg-stone-900 text-white px-6 py-2 rounded-xl hover:bg-stone-700">
+                        Close
+                    </button>
+                </div>
+            </div>
         </dialog>
 
         <!-- Single Product Page starts here -->
