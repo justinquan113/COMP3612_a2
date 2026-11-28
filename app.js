@@ -128,19 +128,8 @@ document.addEventListener("DOMContentLoaded", () =>{
             shoppingCartPage.classList.add('close-view')
         }
     }
-    $('#about-close-x').addEventListener('click', () => {
-        aboutPage.close()
-    })
-
-    $('#about-close-btn').addEventListener('click', () => {
-        aboutPage.close()
-    })
-
-    aboutPage.addEventListener('click', (e) => {
-        if (e.target === aboutPage) {
-            aboutPage.close()
-        }
-    })
+    
+  
 
     const activeTab = ['bg-stone-600', 'text-white']
     const inactiveTab = ['hover:bg-stone-600', 'hover:text-white']
@@ -223,8 +212,24 @@ document.addEventListener("DOMContentLoaded", () =>{
         singleProductPage.classList.add('close-view')
         shoppingCartPage.classList.add('close-view')
         window.scrollTo(0, 0)
-    })})
+    })
 
+    $('#about-close-x').addEventListener('click', () => {
+        aboutPage.close()
+    })
+
+    $('#about-close-btn').addEventListener('click', () => {
+        aboutPage.close()
+    })
+
+    aboutPage.addEventListener('click', (e) => {
+        if (e.target === aboutPage) {
+            aboutPage.close()
+        }
+    })
+})
+
+/*Single Product Navigation*/
 function breadCrumb(prod_id){
     const container = $('#breadcrumb')
     const template = $('#breadcrumb-container')
@@ -311,15 +316,14 @@ function addToCart(id, quantity){
     saveCart(cart)
     renderShoppingCartPage()
     updateCartCount()
-    
 }
+
 function removeFromCart(id){
     const cart = getCart()
     const updateCart = cart.filter(item => item.id != id)
     saveCart(updateCart)
     renderShoppingCartPage()
     updateCartCount()
-
 }
 
 function updateCartCount(){
@@ -505,6 +509,7 @@ function renderShippingSummary(){
 function calculateShippingCost(destination, shippingType, merchandiseTotal){
     let shippingTotal
     const cart = getCart()
+    //free shipping over $500
     if(merchandiseTotal > 500 || cart.length == 0){
         shippingTotal = 0
         return shippingTotal
@@ -552,6 +557,7 @@ function calculateShippingCost(destination, shippingType, merchandiseTotal){
             shippingTotal = 50
         }
     }
+    
     return shippingTotal
 }
 

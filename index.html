@@ -40,6 +40,7 @@
                 <div class="h-[50vh]">
                     <img class="w-full h-full object-cover" src="images/wood.jpg">
                 </div>
+                <!--Essentials Section-->
                 <div class="py-10 px-20 bg-gray-100 h-[45vh]">
                     <h1 class="mb-5 text-2xl">Essentials</h1>
                     <div id="essential-container" class="flex h-[80%] gap-8">
@@ -53,6 +54,7 @@
                         </template>
                     </div>
                 </div>
+                <!--Browse Button-->
                 <div class="h-[25vh]" id="browse-collection">
                     <div class="flex h-full">
                         <div class="flex flex-col justify-center items-center w-[50%] bg-stone-200 gap-4">
@@ -62,6 +64,7 @@
                         <img class="w-[50%] h-full object-cover" src="images/kitchen.jpg">
                     </div>
                 </div>
+                <!--Featured Items-->
                 <div id="feature-items" class="h-[55vh] bg-gray-100 py-10 px-20">
                     <h1 class="mb-5 text-2xl">Featured Products</h1>
                     <div id="feature-container" class="flex h-[80%] gap-8">
@@ -288,6 +291,7 @@
         <!-- Single Product Page starts here -->
         <article id="single-product" class="close-view">
             <div class="flex flex-col p-8 ">
+                <!--Navigation-->
                 <div id="breadcrumb">
                     <template id="breadcrumb-container">
                         <ol class="flex gap-2">
@@ -300,10 +304,13 @@
                     </template>
                 </div>
                 <div id="product-info" class="flex justify-evenly">
+                    <!--Product Image-->
                     <div id="prod-img" class="w-[50%] h-[50vh]">
 
                     </div>
+                    
                     <div id="prod-desc" class="w-[50%] flex flex-col">
+                        <!--Product Info-->
                         <div id="prod-details" class="flex flex-col gap-4">
                             <template id="prod-template">
                                 <h1 id="prod-title" class="font-bold text-3xl"></h1>
@@ -317,6 +324,7 @@
                                 <p id="prod-description" class="w-[60%]"></p>
                             </template>
                         </div>
+                        <!--Add Product to Cart-->
                         <div class="flex flex-col gap-5 mt-5">
                             <div class="flex items-center gap-2">
                                 <p>Quantity:</p>
@@ -326,12 +334,15 @@
                         </div>
                     </div> 
                 </div>
+                <!--Specifications and Reviews-->
                 <div id="prod-specs">
+                    <!--Headers-->
                     <div class="inline-grid grid-cols-2">
                         <h3 id="specifics" class="border border-b-0 py-3 px-5 text-center cursor-pointer bg-stone-600 text-white">Specifications</h3>
                         <h3 id="reviews" class="border border-l-0 border-b-0 py-3 px-5 text-center cursor-pointer hover:bg-stone-600 hover:text-white">Reviews</h3>
                     </div>
                     <div class="border h-[30%] p-5">
+                        <!--Specifications-->
                         <div id="specs-content" class="flex flex-col gap-4">
                             <div class="flex gap-3">
                                 <h2>Weight: </h2>
@@ -360,6 +371,7 @@
                                 <p id="return"></p>
                             </div>
                         </div>
+                        <!--Reviews-->
                         <div id="reviews-content" class="close-view flex flex-col gap-3">
                             <template id="review-template">
                                 <div class="review-card border rounded-md p-4 bg-stone-50">
@@ -385,7 +397,7 @@
         <div id="cart-page" class="close-view">
             <div class="p-4 w-full flex flex-col">
                 <h1 class="text-center font-bold text-2xl mb-4">Shopping Cart</h1>
-
+                <!--Headers-->
                 <table class="w-[60%] mx-auto">
                     <thead id="shopping-headers">
                         <tr>
@@ -395,11 +407,12 @@
                             <th class="text-right w-24">Subtotal</th>
                         </tr>
                     </thead>
+                    <!--Shopping Cart Items-->
                     <tbody id="items-container">
 
                     </tbody>
                 </table>
-
+                <!--template for a single item from cart-->
                 <template id="cart-item-template">
                     <tr class="cart-item">
                         <td>
@@ -414,15 +427,20 @@
                         <td class="item-subtotal text-right"></td>
                     </tr>
                 </template>
+                <!--Shipping and Cart Payment Summary-->
                 <div id="cart-payment" class="flex justify-evenly gap-10 mt-5">
+                    <!--Shipping and Destination Options-->
                     <div id="cart-shipping" class="w-[25vh] flex flex-col gap-4">
                         <h3 class="font-bold text-center mb-3">Shipping</h3>
+                        
                         <div class="bg-gray-200 p-7 flex flex-col gap-7">
+                            <!--Shipping Options-->
                             <select id="shipping-opt" class="bg-white py-2 disabled:cursor-not-allowed disabled:opacity-50">
                                 <option value="standard">Standard</option>
                                 <option value="express">Express</option>
                                 <option value="priority">Priority</option>
                             </select>
+                            <!--Destination Options-->
                             <select class="bg-white p-2 disabled:cursor-not-allowed disabled:opacity-50" id="destination">
                                 <option value="CA">Canada</option>
                                 <option value="US">United States</option>
@@ -430,6 +448,7 @@
                             </select>
                         </div>
                     </div>
+                    <!--Cart Summary-->
                     <div id="cart-summary" class="w-[70vh] flex flex-col gap-4">
                         <h3 class="font-bold text-center mb-3">Summary</h3>
                         <div class="border-2 p-4 flex flex-col gap-5">
