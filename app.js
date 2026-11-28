@@ -733,7 +733,7 @@ function highlightSelected() {
     }
 }
 
-// Filter and sort the array (compare function pattern from Lab 10 Ex 10.1)
+// Filter and sort the array
 function getMatchingProducts() {
     return products
         .filter(p => {
