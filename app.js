@@ -276,7 +276,9 @@ function singleProductRender(prod_id){
             clone.querySelector('#prod-title').textContent = p.title
             clone.querySelector('#prod-price').textContent = `$${p.price}`
             clone.querySelector('#prod-sku').textContent = `SKU: ${p.sku}`
-            clone.querySelector('#prod-rating').textContent = `rating: ${p.rating}`
+            //round the rating to the nearest whole star
+            const stars = Math.round(p.rating)
+            clone.querySelector('#prod-rating').textContent = '★'.repeat(stars) + '☆'.repeat(5 - stars)
             const tagsDiv = clone.querySelector('#tags')
             for(let tag of p.tags){
                 const span = C('span')
@@ -316,6 +318,10 @@ function addToCart(id, quantity){
     saveCart(cart)
     renderShoppingCartPage()
     updateCartCount()
+
+    //let the user know which product was added
+    const product = products.find(p => p.id == id)
+    alert(`Added ${quantity} x ${product.title} to your cart!`)
 }
 
 function removeFromCart(id){
