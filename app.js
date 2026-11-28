@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () =>{
             homePage.classList.remove('close-view')
             browsePage.classList.add('close-view')
             categoryPage.classList.add('close-view')
-            aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
             shoppingCartPage.classList.add('close-view')
         }
@@ -101,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () =>{
             homePage.classList.add('close-view')
             browsePage.classList.remove('close-view')
             categoryPage.classList.add('close-view')
-            aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
             shoppingCartPage.classList.add('close-view')
         }
@@ -110,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () =>{
             homePage.classList.add('close-view')
             browsePage.classList.add('close-view')
             categoryPage.classList.remove('close-view')
-            aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
             shoppingCartPage.classList.add('close-view')
         }
@@ -119,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () =>{
             homePage.classList.add('close-view')
             browsePage.classList.add('close-view')
             categoryPage.classList.add('close-view')
-            aboutPage.classList.add('close-view')
             singleProductPage.classList.add('close-view')
             shoppingCartPage.classList.remove('close-view')
         }
@@ -128,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () =>{
             homePage.classList.add('close-view')
             browsePage.classList.add('close-view')
             categoryPage.classList.add('close-view')
-            aboutPage.classList.remove('close-view')
             singleProductPage.classList.add('close-view')
             shoppingCartPage.classList.add('close-view')
         }
@@ -225,7 +220,6 @@ document.addEventListener("DOMContentLoaded", () =>{
         homePage.classList.remove('close-view')
         browsePage.classList.add('close-view')
         categoryPage.classList.add('close-view')
-        aboutPage.classList.add('close-view')
         singleProductPage.classList.add('close-view')
         shoppingCartPage.classList.add('close-view')
         window.scrollTo(0, 0)
@@ -862,7 +856,7 @@ function renderBrowseGrid(list) {
 
     if (list.length === 0) {
         const emptyMsg = C('p')
-        emptyMsg.className = 'text-2xl text-center py-10 w-full'
+        emptyMsg.className = 'text-2xl text-center py-10 col-span-full'
         emptyMsg.textContent = 'No products match your selected filters.'
         grid.appendChild(emptyMsg)
         return
